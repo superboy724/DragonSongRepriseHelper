@@ -77,10 +77,9 @@ namespace DragonSongRepriseHelper
 
         public void RegisterSettingForm(TabPage pluginScreenSpace, Label pluginStatusText)
         {
-            ;
             settingContainer.LoadSetting(Path.Combine(ActGlobals.oFormActMain.AppDataFolder.FullName, "DragonSongRepriseHelper.v2.config"));
 
-            settingForm = new SettingForm(settingContainer,Test, logreader.Test);
+            settingForm = new SettingForm(settingContainer,Test);
             pluginScreenSpace.Controls.Add(settingForm);
             settingForm.Dock = DockStyle.Fill;
 
@@ -94,7 +93,8 @@ namespace DragonSongRepriseHelper
                 logreader.Dispose();
             }
             logreader = new LogReader();
-            
+            postNamazuHelper = new PostNamazuHelper(settingContainer.FunctionSetting.PostNamazuSetting);
+
 
             //注册点名事件
             logreader.RegisterEvent(27, "^(.+?)TargetIcon(\\s|\\S)+$", (log) =>
@@ -113,17 +113,17 @@ namespace DragonSongRepriseHelper
                     //点穿天
                     if (trueCode == skywardTripleMark)
                     {
-                        P2Step1Process(log, p2FirstStepPlayers);
+                        P2Step1Process(log);
                     }
                     //点分摊
                     if (trueCode == sword1Mark || trueCode == sword2Mark)
                     {
-                        P2Step2Process(log, p2FirstStepPlayers);
+                        P2Step2Process(log);
                     }
                     //点陨石
                     if (trueCode == meteor)
                     {
-                        P2Step3Process(log, p2FirstStepPlayers);
+                        P2Step3Process(log);
                     }
                 }
                 catch (Exception ex)
@@ -136,7 +136,7 @@ namespace DragonSongRepriseHelper
             {
                 try
                 {
-                    P2Step4Process(log, p2FirstStepPlayers);
+                    P2Step4Process(log);
                 }
                 catch (Exception ex)
                 {
@@ -313,7 +313,7 @@ namespace DragonSongRepriseHelper
                     }
                 }
             }
-            Log.Print("二运点名" + playerId + ",顺位:" + i);
+            Log.Print("二运点名" + playerId);
         }
 
         //二运陨石预站位
@@ -420,7 +420,7 @@ namespace DragonSongRepriseHelper
         }
 
         //二运放陨石
-        public void P2Step4Process(string log, string[] playerSetting)
+        public void P2Step4Process(string log)
         {
             if (!settingContainer.FunctionSetting.P2Step3Enable)
             {

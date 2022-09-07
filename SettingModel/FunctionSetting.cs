@@ -26,12 +26,12 @@ namespace DragonSongRepriseHelper.SettingModel
         {
             string[] settingTexts = new string[7];
             settingTexts[0] = "postNamazuUrl=" + PostNamazuSetting;
-            settingTexts[1] = "p2Step1Enable=" + P2Step1Enable;
-            settingTexts[2] = "p2Step2Enable=" + P2Step2Enable;
-            settingTexts[3] = "p2Step3Enable=" + P2Step3Enable;
-            settingTexts[4] = "p2Step4Enable=" + P2Step4Enable;
-            settingTexts[5] = "p2Step2MarkDisabled=" + P2Step2MarkDisabled;
-            settingTexts[6] = "p2Step4ChangeTowerEnable=" + P2Step4ChangeTowerEnable;
+            settingTexts[1] = "p2Step1Enable=" + (P2Step1Enable ? "true" : "false");
+            settingTexts[2] = "p2Step2Enable=" + (P2Step2Enable ? "true" : "false");
+            settingTexts[3] = "p2Step3Enable=" + (P2Step3Enable ? "true" : "false");
+            settingTexts[4] = "p2Step4Enable=" + (P2Step4Enable ? "true" : "false");
+            settingTexts[5] = "p2Step2MarkDisabled=" + (P2Step2MarkDisabled ? "true" : "false");
+            settingTexts[6] = "p2Step4ChangeTowerEnable=" + (P2Step4ChangeTowerEnable ? "true" : "false");
 
             return settingTexts;
         }

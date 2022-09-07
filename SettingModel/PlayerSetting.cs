@@ -40,51 +40,104 @@ namespace DragonSongRepriseHelper.SettingModel
         public string[] GetSettingText()
         {
             string[] playerSettings = new string[8];
-            playerSettings[0] = "playerMT=" + MT + "|" + PlayerIndex[MT];
-            playerSettings[1] = "playerST=" + ST + "|" + PlayerIndex[ST];
-            playerSettings[2] = "playerH1=" + H1 + "|" + PlayerIndex[H1];
-            playerSettings[3] = "playerH2=" + H2 + "|" + PlayerIndex[H2];
-            playerSettings[4] = "playerD1=" + D1 + "|" + PlayerIndex[D1];
-            playerSettings[5] = "playerD2=" + D2 + "|" + PlayerIndex[D2];
-            playerSettings[6] = "playerD3=" + D3 + "|" + PlayerIndex[D3];
-            playerSettings[7] = "playerD4=" + D4 + "|" + PlayerIndex[D4];
+            playerSettings[0] = "playerMT=" + MT + "|" + (string.IsNullOrEmpty(MT) ? "" : PlayerIndex[MT].ToString());
+            playerSettings[1] = "playerST=" + ST + "|" + (string.IsNullOrEmpty(ST) ? "" : PlayerIndex[ST].ToString());
+            playerSettings[2] = "playerH1=" + H1 + "|" + (string.IsNullOrEmpty(H1) ? "" : PlayerIndex[H1].ToString());
+            playerSettings[3] = "playerH2=" + H2 + "|" + (string.IsNullOrEmpty(H2) ? "" : PlayerIndex[H2].ToString());
+            playerSettings[4] = "playerD1=" + D1 + "|" + (string.IsNullOrEmpty(D1) ? "" : PlayerIndex[D1].ToString());
+            playerSettings[5] = "playerD2=" + D2 + "|" + (string.IsNullOrEmpty(D2) ? "" : PlayerIndex[D2].ToString());
+            playerSettings[6] = "playerD3=" + D3 + "|" + (string.IsNullOrEmpty(D3) ? "" : PlayerIndex[D3].ToString());
+            playerSettings[7] = "playerD4=" + D4 + "|" + (string.IsNullOrEmpty(D4) ? "" : PlayerIndex[D4].ToString());
 
             return playerSettings;
         }
 
         public void LoadSettingFromText(Dictionary<string,string> configTexts)
         {
-            if (configTexts.ContainsKey("MT"))
+            if (configTexts.ContainsKey("playerMT"))
             {
-                this.MT = configTexts["MT"];
+                if (configTexts["playerMT"].Contains("|"))
+                {
+                    string playerId = configTexts["playerMT"].Split('|')[0];
+                    string playerIndex = configTexts["playerMT"].Split('|')[1];
+                    if(!(string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(playerIndex)))
+                    {
+                        this.MT = playerId;
+                        this.PlayerIndex.Add(playerId, Convert.ToInt32(playerIndex));
+                    }
+                    
+                }
+                
             }
-            if (configTexts.ContainsKey("ST"))
+            if (configTexts.ContainsKey("playerST"))
             {
-                this.ST = configTexts["ST"];
+                string playerId = configTexts["playerST"].Split('|')[0];
+                string playerIndex = configTexts["playerST"].Split('|')[1];
+                if (!(string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(playerIndex)))
+                {
+                    this.ST = playerId;
+                    this.PlayerIndex.Add(playerId, Convert.ToInt32(playerIndex));
+                }
             }
-            if (configTexts.ContainsKey("ST"))
+            if (configTexts.ContainsKey("playerH1"))
             {
-                this.H1 = configTexts["H1"];
+                string playerId = configTexts["playerH1"].Split('|')[0];
+                string playerIndex = configTexts["playerH1"].Split('|')[1];
+                if (!(string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(playerIndex)))
+                {
+                    this.H1 = playerId;
+                    this.PlayerIndex.Add(playerId, Convert.ToInt32(playerIndex));
+                }
             }
-            if (configTexts.ContainsKey("H2"))
+            if (configTexts.ContainsKey("playerH2"))
             {
-                this.H2 = configTexts["H2"];
+                string playerId = configTexts["playerH2"].Split('|')[0];
+                string playerIndex = configTexts["playerH2"].Split('|')[1];
+                if (!(string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(playerIndex)))
+                {
+                    this.H2 = playerId;
+                    this.PlayerIndex.Add(playerId, Convert.ToInt32(playerIndex));
+                }
             }
-            if (configTexts.ContainsKey("D1"))
+            if (configTexts.ContainsKey("playerD1"))
             {
-                this.D1 = configTexts["D1"];
+                string playerId = configTexts["playerD1"].Split('|')[0];
+                string playerIndex = configTexts["playerD1"].Split('|')[1];
+                if (!(string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(playerIndex)))
+                {
+                    this.D1 = playerId;
+                    this.PlayerIndex.Add(playerId, Convert.ToInt32(playerIndex));
+                }
             }
-            if (configTexts.ContainsKey("D2"))
+            if (configTexts.ContainsKey("playerD2"))
             {
-                this.D2 = configTexts["D2"];
+                string playerId = configTexts["playerD2"].Split('|')[0];
+                string playerIndex = configTexts["playerD2"].Split('|')[1];
+                if (!(string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(playerIndex)))
+                {
+                    this.D2 = playerId;
+                    this.PlayerIndex.Add(playerId, Convert.ToInt32(playerIndex));
+                }
             }
-            if (configTexts.ContainsKey("D3"))
+            if (configTexts.ContainsKey("playerD3"))
             {
-                this.D3 = configTexts["D3"];
+                string playerId = configTexts["playerD3"].Split('|')[0];
+                string playerIndex = configTexts["playerD3"].Split('|')[1];
+                if (!(string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(playerIndex)))
+                {
+                    this.D3 = playerId;
+                    this.PlayerIndex.Add(playerId, Convert.ToInt32(playerIndex));
+                }
             }
-            if (configTexts.ContainsKey("D4"))
+            if (configTexts.ContainsKey("playerD4"))
             {
-                this.D4 = configTexts["D4"];
+                string playerId = configTexts["playerD4"].Split('|')[0];
+                string playerIndex = configTexts["playerD4"].Split('|')[1];
+                if (!(string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(playerIndex)))
+                {
+                    this.D4 = playerId;
+                    this.PlayerIndex.Add(playerId, Convert.ToInt32(playerIndex));
+                }
             }
         }
 
@@ -127,12 +180,25 @@ namespace DragonSongRepriseHelper.SettingModel
 
         public bool SetPlayerFromPlayerText(string text)
         {
+            PlayerIndex.Clear();
             string[] textStrArray = text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             int index = 1;
             foreach(var item in textStrArray)
             {
+                if (!item.Contains(","))
+                {
+                    continue;
+                }
                 string playerId = item.Split(',')[0];
                 string playerJob = item.Split(',')[1];
+                if(string.IsNullOrEmpty(playerId))
+                {
+                    continue;
+                }
+                if (this.PlayerIndex.ContainsKey(playerId))
+                {
+                    continue;
+                }
 
                 switch (playerJob)
                 {

@@ -14,12 +14,10 @@ namespace DragonSongRepriseHelper
     {
         SettingContainer settingContainer;
         Action testFunction;
-        Action testFunction2;
-        public SettingForm(SettingContainer settingContainer,Action testFunction,Action testFunction2)
+        public SettingForm(SettingContainer settingContainer,Action testFunction)
         {
             this.settingContainer = settingContainer;
             this.testFunction = testFunction;
-            this.testFunction2 = testFunction2;
             InitializeComponent();
         }
 
@@ -94,11 +92,6 @@ namespace DragonSongRepriseHelper
             this.settingContainer.FunctionSetting.P2Step2Enable = cbP2Step2Enable.Checked;
         }
 
-        private void btnTestBus_Click(object sender, EventArgs e)
-        {
-            testFunction2();
-        }
-
         private void cbP2Step3Enable_CheckedChanged(object sender, EventArgs e)
         {
             if (!cbP2Step3Enable.Checked)
@@ -118,12 +111,12 @@ namespace DragonSongRepriseHelper
                     cbP2Step4ChangeTowerEnable.Enabled = true;
                 }
             }
-            cbP2Step2Enable.Checked = cbP2Step3Enable.Checked;
+            this.settingContainer.FunctionSetting.P2Step3Enable = cbP2Step3Enable.Checked;
         }
 
         private void cbP2Step2MarkEnable_CheckedChanged(object sender, EventArgs e)
         {
-            cbP2Step2Enable.Checked = cbP2Step2MarkDisabled.Checked;
+            this.settingContainer.FunctionSetting.P2Step2MarkDisabled = cbP2Step2MarkDisabled.Checked;
         }
 
         private void cbP2Step4Enable_CheckedChanged(object sender, EventArgs e)
@@ -136,7 +129,7 @@ namespace DragonSongRepriseHelper
             {
                 cbP2Step4ChangeTowerEnable.Enabled = true;
             }
-            cbP2Step2Enable.Checked = cbP2Step4Enable.Checked;
+            this.settingContainer.FunctionSetting.P2Step4Enable = cbP2Step4Enable.Checked;
         }
 
         private void cbP2Step4ChangeTowerEnable_CheckedChanged(object sender, EventArgs e)

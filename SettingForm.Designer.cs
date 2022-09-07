@@ -30,11 +30,12 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label10 = new System.Windows.Forms.Label();
+            this.lbSettingPlayerStatus = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.btnTestBus = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.tbPostNamazuUrl = new System.Windows.Forms.TextBox();
             this.tbPlayers = new System.Windows.Forms.TextBox();
@@ -73,11 +74,12 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label10);
+            this.tabPage1.Controls.Add(this.lbSettingPlayerStatus);
             this.tabPage1.Controls.Add(this.label9);
             this.tabPage1.Controls.Add(this.textBox1);
             this.tabPage1.Controls.Add(this.label7);
             this.tabPage1.Controls.Add(this.label6);
-            this.tabPage1.Controls.Add(this.btnTestBus);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.tbPostNamazuUrl);
             this.tabPage1.Controls.Add(this.tbPlayers);
@@ -90,6 +92,24 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "基础设置";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(169, 7);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 12);
+            this.label10.TabIndex = 14;
+            this.label10.Text = "设置状态：";
+            // 
+            // lbSettingPlayerStatus
+            // 
+            this.lbSettingPlayerStatus.AutoSize = true;
+            this.lbSettingPlayerStatus.Location = new System.Drawing.Point(240, 7);
+            this.lbSettingPlayerStatus.Name = "lbSettingPlayerStatus";
+            this.lbSettingPlayerStatus.Size = new System.Drawing.Size(41, 12);
+            this.lbSettingPlayerStatus.TabIndex = 13;
+            this.lbSettingPlayerStatus.Text = "Status";
             // 
             // label9
             // 
@@ -128,17 +148,6 @@
             this.label6.Text = "玩家列表填写规则如下，每一行一个玩家：\r\n[玩家ID],[职责：MT,ST,H1,H2,D1,D2,D3,D4]\r\n注意：文本框中的顺序必须与游戏里面的小队列表顺" +
     "序相同！\r\n\r\n示例如下：\r\n自由落体,H2\r\n白潘,MT\r\ndaisuke,ST\r\n少打音游,H1\r\n多读书,D2\r\n一碗屎,D1\r\n三倍冰淇淋,D3\r\n暴徒" +
     ",D4";
-            // 
-            // btnTestBus
-            // 
-            this.btnTestBus.Location = new System.Drawing.Point(691, 276);
-            this.btnTestBus.Name = "btnTestBus";
-            this.btnTestBus.Size = new System.Drawing.Size(211, 37);
-            this.btnTestBus.TabIndex = 8;
-            this.btnTestBus.Text = "业务测试";
-            this.btnTestBus.UseVisualStyleBackColor = true;
-            this.btnTestBus.Visible = false;
-            this.btnTestBus.Click += new System.EventHandler(this.btnTestBus_Click);
             // 
             // label2
             // 
@@ -377,7 +386,6 @@
         private System.Windows.Forms.Button btnLogClear;
         private System.Windows.Forms.CheckBox cbP2Step1Enable;
         private System.Windows.Forms.CheckBox cbP2Step2Enable;
-        private System.Windows.Forms.Button btnTestBus;
         private System.Windows.Forms.CheckBox cbP2Step3Enable;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
@@ -390,5 +398,7 @@
         private System.Windows.Forms.CheckBox cbP2Step4Enable;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label lbSettingPlayerStatus;
     }
 }

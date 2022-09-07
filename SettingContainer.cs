@@ -31,7 +31,11 @@ namespace DragonSongRepriseHelper
                 Dictionary<string, string> settingsStr = new Dictionary<string, string>();
                 foreach(var item in data)
                 {
-                    if (string.IsNullOrEmpty(item))
+                    if (!item.Contains("="))
+                    {
+                        continue;
+                    }
+                    if (!string.IsNullOrEmpty(item))
                     {
                         settingsStr.Add(item.Split('=')[0], item.Split('=')[1]);
                     }
@@ -62,7 +66,6 @@ namespace DragonSongRepriseHelper
 
             sw.Flush();
             sw.Close();
-            fs.Flush();
             fs.Close();
         }
 
