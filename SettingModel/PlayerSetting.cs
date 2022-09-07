@@ -6,28 +6,40 @@ using System.Threading.Tasks;
 
 namespace DragonSongRepriseHelper.SettingModel
 {
-    public class Player : SettingModel
+    public class PlayerSetting : SettingModel
     {
-        string MT { get; set; }
+        public string MT { get; set; }
 
-        string ST { get; set; }
+        public string ST { get; set; }
 
-        string H1 { get; set; }
+        public string H1 { get; set; }
 
-        string H2 { get; set; }
+        public string H2 { get; set; }
 
-        string D1 { get; set; }
+        public string D1 { get; set; }
 
-        string D2 { get; set; }
+        public string D2 { get; set; }
 
-        string D3 { get; set; }
+        public string D3 { get; set; }
 
-        string D4 { get; set; }
+        public string D4 { get; set; }
+
+        public string[] PlayerByIndex { get; set; }
+
+        public PlayerSetting()
+        {
+            PlayerByIndex = new string[8];
+        }
 
         public bool isSettingOk()
         {
             return !string.IsNullOrEmpty(MT) && !string.IsNullOrEmpty(ST) && !string.IsNullOrEmpty(H1) && !string.IsNullOrEmpty(H2)
                 && !string.IsNullOrEmpty(D1) && !string.IsNullOrEmpty(D2) && !string.IsNullOrEmpty(D3) && !string.IsNullOrEmpty(D3);
+        }
+
+        public void SetIndex(string[] playerIds)
+        {
+            this.PlayerByIndex = playerIds;
         }
 
         public string[] GetSettingText()

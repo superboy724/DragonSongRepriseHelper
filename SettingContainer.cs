@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DragonSongRepriseHelper.SettingModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,70 +10,61 @@ namespace DragonSongRepriseHelper
 {
     public class SettingContainer
     {
-        Dictionary<string, string> Settings { get; set; }
-        Action cbk;
+        public FunctionSetting FunctionSetting { get; set; }
+        public PlayerSetting PlayerSetting { get; set; }
 
         public SettingContainer()
         {
-            this.Settings = new Dictionary<string, string>();
+            FunctionSetting = new FunctionSetting();
+            PlayerSetting = new PlayerSetting();
         }
 
         public void LoadSetting(string path)
         {
             if (!File.Exists(path))
             {
-                Settings = new Dictionary<string, string>();
+                return;
             }
             else
             {
                 var data = File.ReadAllLines(path);
+                Dictionary<string, string> settingsStr = new Dictionary<string, string>();
                 foreach(var item in data)
                 {
-                    Settings.Add(item.Split('=')[0], (item.Split('=')[1]).Replace("<<line>>","\r\n"));
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        settingsStr.Add(item.Split('=')[0], item.Split('=')[1]);
+                    }
                 }
-            }
 
-            cbk();
+                FunctionSetting.LoadSettingFromText(settingsStr);
+                PlayerSetting.LoadSettingFromText(settingsStr);
+            }
         }
 
         public void SaveSetting(string path)
         {
             FileStream fs = new FileStream(path, FileMode.OpenOrCreate);
             StreamWriter sw = new StreamWriter(fs);
-            foreach(var item in Settings)
+
+            var functionSettingStr = FunctionSetting.GetSettingText();
+            var playerSettingStr = PlayerSetting.GetSettingText();
+
+            foreach(var item in functionSettingStr)
             {
-                if (string.IsNullOrEmpty(item.Value))
-                {
-                    continue;
-                }
-                sw.WriteLine(item.Key + "=" + item.Value.Replace("\r\n", "<<line>>"));
+                sw.WriteLine(item);
             }
+
+            foreach (var item in playerSettingStr)
+            {
+                sw.WriteLine(item);
+            }
+
+            sw.Flush();
             sw.Close();
+            fs.Flush();
             fs.Close();
         }
 
-        public void UpdateKey(string key,string value)
-        {
-            Settings[key] = value;
-            cbk();
-        }
-
-        public void OnSettingUpdate(Action callback)
-        {
-            cbk = callback;
-        }
-
-        public string Get(string key)
-        {
-            if (this.Settings.ContainsKey(key))
-            {
-                return this.Settings[key];
-            }
-            else
-            {
-                return "";
-            }
-            
-        }
     }
 }

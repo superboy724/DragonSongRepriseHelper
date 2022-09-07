@@ -8,19 +8,19 @@ namespace DragonSongRepriseHelper.SettingModel
 {
     public class FunctionSetting : SettingModel
     {
-        string PostNamazuSetting { get; set; }
+        public string PostNamazuSetting { get; set; }
 
-        string P2Step1Enable { get; set; }
+        public bool P2Step1Enable { get; set; }
 
-        string P2Step2Enable { get; set; }
+        public bool P2Step2Enable { get; set; }
 
-        string P2Step3Enable { get; set; }
+        public bool P2Step3Enable { get; set; }
 
-        string P2Step4Enable { get; set; }
+        public bool P2Step4Enable { get; set; }
 
-        string P2Step2MarkDisabled { get; set; }
+        public bool P2Step2MarkDisabled { get; set; }
 
-        string P2Step4ChangeTowerEnable { get; set; }
+        public bool P2Step4ChangeTowerEnable { get; set; }
 
         public string[] GetSettingText()
         {
@@ -44,27 +44,27 @@ namespace DragonSongRepriseHelper.SettingModel
             }
             if (configTexts.ContainsKey("p2Step1Enable"))
             {
-                this.P2Step1Enable = configTexts["p2Step1Enable"];
+                this.P2Step1Enable = configTexts["p2Step1Enable"] == "true";
             }
             if (configTexts.ContainsKey("p2Step2Enable"))
             {
-                this.P2Step2Enable = configTexts["p2Step2Enable"];
+                this.P2Step2Enable = configTexts["p2Step2Enable"] == "true";
             }
             if (configTexts.ContainsKey("p2Step3Enable"))
             {
-                this.P2Step3Enable = configTexts["p2Step3Enable"];
+                this.P2Step3Enable = configTexts["p2Step3Enable"] == "true";
             }
             if (configTexts.ContainsKey("p2Step4Enable"))
             {
-                this.P2Step4Enable = configTexts["p2Step4Enable"];
+                this.P2Step4Enable = configTexts["p2Step4Enable"] == "true";
             }
             if (configTexts.ContainsKey("p2Step2MarkDisabled"))
             {
-                this.P2Step2MarkDisabled = configTexts["p2Step2MarkDisabled"];
+                this.P2Step2MarkDisabled = configTexts["p2Step2MarkDisabled"] == "true";
             }
             if (configTexts.ContainsKey("p2Step4ChangeTowerEnable"))
             {
-                this.P2Step4ChangeTowerEnable = configTexts["p2Step4ChangeTowerEnable"];
+                this.P2Step4ChangeTowerEnable = configTexts["p2Step4ChangeTowerEnable"] == "true";
             }
         }
     }

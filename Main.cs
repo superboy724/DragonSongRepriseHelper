@@ -38,7 +38,7 @@ namespace DragonSongRepriseHelper
             {
                 logreader.Dispose();
             }
-            settingContainer.SaveSetting(Path.Combine(ActGlobals.oFormActMain.AppDataFolder.FullName, "DragonSongRepriseHelper.config"));
+            settingContainer.SaveSetting(Path.Combine(ActGlobals.oFormActMain.AppDataFolder.FullName, "DragonSongRepriseHelper.v2.config"));
             ActGlobals.oFormActMain.OnCombatEnd -= OFormActMain_OnCombatEnd;
         }
 
@@ -48,7 +48,16 @@ namespace DragonSongRepriseHelper
 
             settingContainer = new SettingContainer();
             RegisterSettingForm(pluginScreenSpace, pluginStatusText);
+            RegisterEvent();
+
             ActGlobals.oFormActMain.OnCombatEnd += OFormActMain_OnCombatEnd;
+            ActGlobals.oFormActMain.OnCombatStart += OFormActMain_OnCombatStart;
+        }
+
+        private void OFormActMain_OnCombatStart(bool isImport, CombatToggleEventArgs encounterInfo)
+        {
+            postNamazuHelper = new PostNamazuHelper(settingContainer.FunctionSetting.PostNamazuSetting);
+            Log.Print("战斗开始");
         }
 
         private void OFormActMain_OnCombatEnd(bool isImport, CombatToggleEventArgs encounterInfo)
@@ -68,132 +77,6 @@ namespace DragonSongRepriseHelper
         public void RegisterSettingForm(TabPage pluginScreenSpace, Label pluginStatusText)
         {
             SettingForm settingForm = null;
-            settingContainer.OnSettingUpdate(() =>
-            {
-                string postNamazuUrl = settingContainer.Get("post_namazu_url");
-                string playersStr = settingContainer.Get("players");
-                var p2FirstStepPlayers = playersStr.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                
-                if (logreader != null)
-                {
-                    logreader.Dispose();
-                }
-                logreader = new LogReader();
-                postNamazuHelper = new PostNamazuHelper(postNamazuUrl);
-
-                //注册点名事件
-                logreader.RegisterEvent(27, "^(.+?)TargetIcon(\\s|\\S)+$", (log) =>
-                {
-                    try
-                    {
-                        string logSubString = log.Substring(log.IndexOf("]"));
-                        string markCodeStr = logSubString.Split(':')[5];
-                        int markCode = Convert.ToInt32(markCodeStr, 16);
-                        if (markOffset == -1)
-                        {
-                            markOffset = markCode - skywardTripleMark;
-                            Log.Print("mark offset:" + markOffset);
-                        }
-                        int trueCode = markCode - markOffset;
-                        //点穿天
-                        if (trueCode == skywardTripleMark)
-                        {
-                            P2Step1Process(log, p2FirstStepPlayers);
-                        }
-                        //点分摊
-                        if (trueCode == sword1Mark || trueCode == sword2Mark)
-                        {
-                            P2Step2Process(log, p2FirstStepPlayers);
-                        }
-                        //点陨石
-                        if (trueCode == meteor)
-                        {
-                            P2Step3Process(log, p2FirstStepPlayers);
-                        }
-                    } catch (Exception ex)
-                    {
-                        Log.Print(ex.ToString());
-                    }
-                });
-                //注册放塔事件
-                logreader.RegisterEvent(20, "^(.+?)StartsCasting(.+?)圣骑士埃尔姆诺斯特\\:737C\\:信仰(\\s|\\S)+$", (log) =>
-                {
-                    try
-                    {
-                        P2Step4Process(log, p2FirstStepPlayers);
-                    }
-                    catch(Exception ex)
-                    {
-                        Log.Print(ex.ToString());
-                    }
-                });
-                //注册获取小队玩家事件
-                logreader.RegisterEvent(00, "^(\\s|\\S)+(JJSBTT|DSRH)\\s\\{(\\s|\\S)+\\}$", (log) =>
-                {
-                    int macroType = 0;
-                    string logSubString = log.Substring(log.IndexOf("]"));
-                    List<string> playerSettingStrs = new List<string>();
-
-                    if (logSubString.Contains("DSRH {"))
-                    {
-                        macroType = 1;
-                    }
-                    if (logSubString.Contains("JJSBTT {"))
-                    {
-                        macroType = 2;
-                    }
-                    if(macroType == 1)
-                    {
-                        var index = logSubString.IndexOf("DSRH {");
-                        if (index != -1)
-                        {
-                            var after = logSubString.Substring(index + "DSRH {".Length);
-                            index = after.IndexOf("}");
-                            if (index != -1)
-                            {
-                                var playerIds = after.Substring(0, index).Split(':');
-                                
-                                foreach (var item in playerIds)
-                                {
-                                    if (string.IsNullOrEmpty(item))
-                                    {
-                                        continue;
-                                    }
-                                    playerSettingStrs.Add(item + ",请设置职责");
-                                }
-                            }
-                        }
-                    }
-                    if(macroType == 2)
-                    {
-                        var index = logSubString.IndexOf("JJJSBTT {");
-                        if (index != -1)
-                        {
-                            var after = logSubString.Substring(index + "JJJSBTT {".Length);
-                            index = after.IndexOf("}");
-                            if (index != -1)
-                            {
-                                var playerIds = after.Substring(0, index).Split(':');
-                                foreach (var item in playerIds)
-                                {
-                                    if (string.IsNullOrEmpty(item))
-                                    {
-                                        continue;
-                                    }
-                                    playerSettingStrs.Add(item + ",请设置职责");
-                                }
-                            }
-                        }
-                    }
-                    if(playerSettingStrs.Count > 0)
-                    {
-                        settingForm.SetPlayers(playerSettingStrs);
-                    }
-                });
-
-                logreader.Init();
-            });
             settingContainer.LoadSetting(Path.Combine(ActGlobals.oFormActMain.AppDataFolder.FullName, "DragonSongRepriseHelper.config"));
 
             settingForm = new SettingForm(settingContainer,Test, logreader.Test);
@@ -203,15 +86,136 @@ namespace DragonSongRepriseHelper
             pluginStatusText.Text = "Plugin Started";
         }
 
+        public void RegisterEvent()
+        {
+            if (logreader != null)
+            {
+                logreader.Dispose();
+            }
+            logreader = new LogReader();
+            
+
+            //注册点名事件
+            logreader.RegisterEvent(27, "^(.+?)TargetIcon(\\s|\\S)+$", (log) =>
+            {
+                try
+                {
+                    string logSubString = log.Substring(log.IndexOf("]"));
+                    string markCodeStr = logSubString.Split(':')[5];
+                    int markCode = Convert.ToInt32(markCodeStr, 16);
+                    if (markOffset == -1)
+                    {
+                        markOffset = markCode - skywardTripleMark;
+                        Log.Print("mark offset:" + markOffset);
+                    }
+                    int trueCode = markCode - markOffset;
+                    //点穿天
+                    if (trueCode == skywardTripleMark)
+                    {
+                        P2Step1Process(log, p2FirstStepPlayers);
+                    }
+                    //点分摊
+                    if (trueCode == sword1Mark || trueCode == sword2Mark)
+                    {
+                        P2Step2Process(log, p2FirstStepPlayers);
+                    }
+                    //点陨石
+                    if (trueCode == meteor)
+                    {
+                        P2Step3Process(log, p2FirstStepPlayers);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Print(ex.ToString());
+                }
+            });
+            //注册放塔事件
+            logreader.RegisterEvent(20, "^(.+?)StartsCasting(.+?)圣骑士埃尔姆诺斯特\\:737C\\:信仰(\\s|\\S)+$", (log) =>
+            {
+                try
+                {
+                    P2Step4Process(log, p2FirstStepPlayers);
+                }
+                catch (Exception ex)
+                {
+                    Log.Print(ex.ToString());
+                }
+            });
+            //注册获取小队玩家事件
+            logreader.RegisterEvent(00, "^(\\s|\\S)+(JJSBTT|DSRH)\\s\\{(\\s|\\S)+\\}$", (log) =>
+            {
+                int macroType = 0;
+                string logSubString = log.Substring(log.IndexOf("]"));
+                List<string> playerSettingStrs = new List<string>();
+
+                if (logSubString.Contains("DSRH {"))
+                {
+                    macroType = 1;
+                }
+                if (logSubString.Contains("JJSBTT {"))
+                {
+                    macroType = 2;
+                }
+                if (macroType == 1)
+                {
+                    var index = logSubString.IndexOf("DSRH {");
+                    if (index != -1)
+                    {
+                        var after = logSubString.Substring(index + "DSRH {".Length);
+                        index = after.IndexOf("}");
+                        if (index != -1)
+                        {
+                            var playerIds = after.Substring(0, index).Split(':');
+
+                            foreach (var item in playerIds)
+                            {
+                                if (string.IsNullOrEmpty(item))
+                                {
+                                    continue;
+                                }
+                                playerSettingStrs.Add(item + ",请设置职责");
+                            }
+                        }
+                    }
+                }
+                if (macroType == 2)
+                {
+                    var index = logSubString.IndexOf("JJJSBTT {");
+                    if (index != -1)
+                    {
+                        var after = logSubString.Substring(index + "JJJSBTT {".Length);
+                        index = after.IndexOf("}");
+                        if (index != -1)
+                        {
+                            var playerIds = after.Substring(0, index).Split(':');
+                            foreach (var item in playerIds)
+                            {
+                                if (string.IsNullOrEmpty(item))
+                                {
+                                    continue;
+                                }
+                                playerSettingStrs.Add(item + ",请设置职责");
+                            }
+                        }
+                    }
+                }
+                if (playerSettingStrs.Count > 0)
+                {
+                    settingForm.SetPlayers(playerSettingStrs);
+                }
+            });
+
+            logreader.Init();
+        }
+
         public void Test()
         {
-            string playersStr = settingContainer.Get("players");
-            var players = playersStr.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             postNamazuHelper.SendCommand("/mk attack <" + 1 + ">");
             for (int i = 1; i <= 2; i++)
             {
                 Random r = new Random();
-                postNamazuHelper.SendCommand("/mk attack <" + r.Next(1, players.Length) + ">");
+                postNamazuHelper.SendCommand("/mk attack <" + r.Next(1, settingContainer.PlayerSetting.PlayerByIndex.Length) + ">");
             }
             Clear();
         }
@@ -223,7 +227,7 @@ namespace DragonSongRepriseHelper
             string playerId = logSubString.Split(':')[2];
             Log.Print("点名" + playerId);
             //int i = Utils.GetPlayerIndex(playerSetting, playerId);
-            if (settingContainer.Get("p2step1enable") == "true")
+            if (settingContainer.FunctionSetting.P2Step1Enable)
             {
                 p2Step1AttackPlayer.Add(playerId);
                 if (p2Step1AttackPlayer.Count == 3)
