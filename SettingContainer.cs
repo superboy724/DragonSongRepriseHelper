@@ -48,25 +48,22 @@ namespace DragonSongRepriseHelper
 
         public void SaveSetting(string path)
         {
-            FileStream fs = new FileStream(path, FileMode.OpenOrCreate);
-            StreamWriter sw = new StreamWriter(fs);
+            StringBuilder sb = new StringBuilder();
 
             var functionSettingStr = FunctionSetting.GetSettingText();
             var playerSettingStr = PlayerSetting.GetSettingText();
 
             foreach(var item in functionSettingStr)
             {
-                sw.WriteLine(item);
+                sb.AppendLine(item);
             }
 
             foreach (var item in playerSettingStr)
             {
-                sw.WriteLine(item);
+                sb.AppendLine(item);
             }
 
-            sw.Flush();
-            sw.Close();
-            fs.Close();
+            File.WriteAllText(path,sb.ToString());
         }
 
     }

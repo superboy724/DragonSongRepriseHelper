@@ -139,6 +139,7 @@ namespace DragonSongRepriseHelper
 
         public void SetPlayers(List<string> players)
         {
+            this.settingContainer.PlayerSetting.PlayerSettingClear();
             tbPlayers.Text = "";
             foreach (var item in players)
             {

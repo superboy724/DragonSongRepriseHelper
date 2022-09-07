@@ -274,7 +274,7 @@ namespace DragonSongRepriseHelper
                     string[] mtgroup = new string[4];
                     string[] stgroup = new string[4];
                     mtgroup[0] = settingContainer.PlayerSetting.MT;
-                    mtgroup[1] = settingContainer.PlayerSetting.ST;
+                    mtgroup[1] = settingContainer.PlayerSetting.H1;
                     mtgroup[2] = settingContainer.PlayerSetting.D1;
                     mtgroup[3] = settingContainer.PlayerSetting.D3;
                     stgroup[0] = settingContainer.PlayerSetting.ST;

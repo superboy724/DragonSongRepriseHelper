@@ -219,12 +219,37 @@ namespace DragonSongRepriseHelper.SettingModel
         public string BuildPlayerTextBoxStr()
         {
             StringBuilder sb = new StringBuilder();
+            string[] strs = new string[8];
             foreach(var item in PlayerIndex)
             {
-                sb.Append(item.Key).Append(",").Append(this.GetJobByPlayerId(item.Key)).Append("\r\n");
+                StringBuilder temp = new StringBuilder();
+                temp.Append(item.Key).Append(",").Append(this.GetJobByPlayerId(item.Key)).Append("\r\n");
+                strs[item.Value - 1] = temp.ToString();
+
+            }
+
+            foreach(var item in strs)
+            {
+                if (!string.IsNullOrEmpty(item))
+                {
+                    sb.Append(item);
+                }
             }
 
             return sb.ToString();
+        }
+
+        public void PlayerSettingClear()
+        {
+            this.MT = null;
+            this.ST = null;
+            this.H1 = null;
+            this.H2 = null;
+            this.D1 = null;
+            this.D2 = null;
+            this.D3 = null;
+            this.D4 = null;
+            this.PlayerIndex.Clear();
         }
     }
 
