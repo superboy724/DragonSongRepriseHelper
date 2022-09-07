@@ -17,6 +17,7 @@ namespace DragonSongRepriseHelper
         SettingContainer settingContainer;
         LogReader logreader;
         PostNamazuHelper postNamazuHelper;
+        SettingForm settingForm = null;
         bool clear = false;
         int markOffset = -1;
         const int skywardTripleMark = 0x14A;
@@ -76,8 +77,8 @@ namespace DragonSongRepriseHelper
 
         public void RegisterSettingForm(TabPage pluginScreenSpace, Label pluginStatusText)
         {
-            SettingForm settingForm = null;
-            settingContainer.LoadSetting(Path.Combine(ActGlobals.oFormActMain.AppDataFolder.FullName, "DragonSongRepriseHelper.config"));
+            ;
+            settingContainer.LoadSetting(Path.Combine(ActGlobals.oFormActMain.AppDataFolder.FullName, "DragonSongRepriseHelper.v2.config"));
 
             settingForm = new SettingForm(settingContainer,Test, logreader.Test);
             pluginScreenSpace.Controls.Add(settingForm);
@@ -215,13 +216,13 @@ namespace DragonSongRepriseHelper
             for (int i = 1; i <= 2; i++)
             {
                 Random r = new Random();
-                postNamazuHelper.SendCommand("/mk attack <" + r.Next(1, settingContainer.PlayerSetting.PlayerByIndex.Length) + ">");
+                postNamazuHelper.SendCommand("/mk attack <" + r.Next(1, settingContainer.PlayerSetting.PlayerIndex.Count) + ">");
             }
             Clear();
         }
 
         //一运
-        public void P2Step1Process(string log,string[] playerSetting)
+        public void P2Step1Process(string log)
         {
             string logSubString = log.Substring(log.IndexOf("]"));
             string playerId = logSubString.Split(':')[2];
@@ -232,17 +233,13 @@ namespace DragonSongRepriseHelper
                 p2Step1AttackPlayer.Add(playerId);
                 if (p2Step1AttackPlayer.Count == 3)
                 {
-                    foreach (var item in playerSetting)
+                    foreach (var item in settingContainer.PlayerSetting.PlayerIndex)
                     {
-                        if (!p2Step1AttackPlayer.Contains(item.Split(',')[0]))
+                        if (item.Key != p2Step1AttackPlayer[0] && item.Key != p2Step1AttackPlayer[1] && item.Key != p2Step1AttackPlayer[2]
+                            && item.Key != settingContainer.PlayerSetting.MT && item.Key != settingContainer.PlayerSetting.ST)
                         {
-                            if (item.Contains("MT") || item.Contains("ST"))
-                            {
-                                continue;
-                            }
-                            int i = Utils.GetPlayerIndex(playerSetting, item.Split(',')[0]);
-                            postNamazuHelper.SendCommand("/mk attack <" + i + ">");
-                            Log.Print("无点名" + playerId + ",顺位:" + i);
+                            postNamazuHelper.SendCommand("/mk attack <" + item.Value + ">");
+                            Log.Print("无点名" + item.Key + ",顺位:" + item.Value);
                         }
                     }
                 }
@@ -251,7 +248,7 @@ namespace DragonSongRepriseHelper
         }
 
         //二运冲锋
-        public void P2Step2Process(string log,string[] playerSetting)
+        public void P2Step2Process(string log)
         {
             string logSubString = log.Substring(log.IndexOf("]"));
             string markCodeStr = logSubString.Split(':')[5];
@@ -261,85 +258,66 @@ namespace DragonSongRepriseHelper
             string playerId = logSubString.Split(':')[2];
             
             Log.Print("二运点名" + playerId);
-            for (int i = 1; i <= playerSetting.Length; i++)
+            if (settingContainer.FunctionSetting.P2Step2Enable)
             {
-                if (playerId == playerSetting[i - 1].Split(',')[0])
+                Log.Print("判断开始");
+                if (trueCode == sword1Mark)
                 {
-                    if (settingContainer.Get("p2step2enable") == "true")
-                    {
-                        Log.Print("判断开始");
-                        if (trueCode == sword1Mark)
-                        {
-                            p2Step2AttackPlayer[0] = playerSetting[i - 1];
-                        }
-                        if (trueCode == sword2Mark)
-                        {
-                            p2Step2AttackPlayer[1] = playerSetting[i - 1];
-                        }
-                        if (p2Step2AttackPlayer[0] != null && p2Step2AttackPlayer[1] != null)
-                        {
-                            string[] mtgroup = new string[4];
-                            string[] stgroup = new string[4];
-                            foreach (var item in playerSetting)
-                            {
-                                switch (item.Split(',')[1])
-                                {
-                                    case "MT": mtgroup[0] = item; break;
-                                    case "H1": mtgroup[1] = item; break;
-                                    case "D1": mtgroup[2] = item; break;
-                                    case "D3": mtgroup[3] = item; break;
-                                    case "ST": stgroup[0] = item; break;
-                                    case "H2": stgroup[1] = item; break;
-                                    case "D2": stgroup[2] = item; break;
-                                    case "D4": stgroup[3] = item; break;
-                                }
-                            }
-                            Log.Print("mtgroup.Contains(p2Step2AttackPlayer[0]) && mtgroup.Contains(p2Step2AttackPlayer[1]) == " + (mtgroup.Contains(p2Step2AttackPlayer[0]) && mtgroup.Contains(p2Step2AttackPlayer[1]) == true ? "true" : "false"));
-                            Log.Print("stgroup.Contains(p2Step2AttackPlayer[0]) && stgroup.Contains(p2Step2AttackPlayer[1]) == " + (stgroup.Contains(p2Step2AttackPlayer[0]) && stgroup.Contains(p2Step2AttackPlayer[1]) == true ? "true" : "false"));
-                            if (mtgroup.Contains(p2Step2AttackPlayer[0]) && mtgroup.Contains(p2Step2AttackPlayer[1]))
-                            {
-                                if (settingContainer.Get("p2step2enable") == "true")
-                                {
-                                    if(settingContainer.Get("p2step2markdisabled") == "true")
-                                    {
-                                        postNamazuHelper.SendCommand("/y 【冲锋换位提醒】D2 " + stgroup[2].Split(',')[0] + " 进行换位");
-                                        postNamazuHelper.SendCommand("/p 【冲锋换位提醒】D2 " + stgroup[2].Split(',')[0] + " 进行换位<se.8>");
-                                    }
-                                    else
-                                    {
-                                        postNamazuHelper.SendCommand("/mk circle <" + Utils.GetPlayerIndex(playerSetting, stgroup[2].Split(',')[0]) + ">");
-                                    }
-                                    Clear();
-                                }
-
-                            }
-                            if (stgroup.Contains(p2Step2AttackPlayer[0]) && stgroup.Contains(p2Step2AttackPlayer[1]))
-                            {
-                                if (settingContainer.Get("p2step2enable") == "true")
-                                {
-                                    if (settingContainer.Get("p2step2markdisabled") == "true")
-                                    {
-                                        postNamazuHelper.SendCommand("/y 【冲锋换位提醒】D1 " + mtgroup[2].Split(',')[0] + " 进行换位");
-                                        postNamazuHelper.SendCommand("/p 【冲锋换位提醒】D1 " + mtgroup[2].Split(',')[0] + " 进行换位<se.8>");
-                                    }
-                                    else
-                                    {
-                                        postNamazuHelper.SendCommand("/mk circle <" + Utils.GetPlayerIndex(playerSetting, mtgroup[2].Split(',')[0]) + ">");
-                                    }
-                                    Clear();
-                                }
-
-                            }
-                        }
-                    }
-                    Log.Print("二运点名" + playerId + ",顺位:" + i);
-                    break;
+                    p2Step2AttackPlayer[0] = playerId;
                 }
-            };
+                if (trueCode == sword2Mark)
+                {
+                    p2Step2AttackPlayer[1] = playerId;
+                }
+                if (p2Step2AttackPlayer[0] != null && p2Step2AttackPlayer[1] != null)
+                {
+                    string[] mtgroup = new string[4];
+                    string[] stgroup = new string[4];
+                    mtgroup[0] = settingContainer.PlayerSetting.MT;
+                    mtgroup[1] = settingContainer.PlayerSetting.ST;
+                    mtgroup[2] = settingContainer.PlayerSetting.D1;
+                    mtgroup[3] = settingContainer.PlayerSetting.D3;
+                    stgroup[0] = settingContainer.PlayerSetting.ST;
+                    stgroup[1] = settingContainer.PlayerSetting.H2;
+                    stgroup[2] = settingContainer.PlayerSetting.D2;
+                    stgroup[3] = settingContainer.PlayerSetting.D4;
+                    Log.Print("mtgroup.Contains(p2Step2AttackPlayer[0]) && mtgroup.Contains(p2Step2AttackPlayer[1]) == " + (mtgroup.Contains(p2Step2AttackPlayer[0]) && mtgroup.Contains(p2Step2AttackPlayer[1]) == true ? "true" : "false"));
+                    Log.Print("stgroup.Contains(p2Step2AttackPlayer[0]) && stgroup.Contains(p2Step2AttackPlayer[1]) == " + (stgroup.Contains(p2Step2AttackPlayer[0]) && stgroup.Contains(p2Step2AttackPlayer[1]) == true ? "true" : "false"));
+                    if (mtgroup.Contains(p2Step2AttackPlayer[0]) && mtgroup.Contains(p2Step2AttackPlayer[1]))
+                    {
+                        if (settingContainer.FunctionSetting.P2Step2Enable)
+                        {
+                            postNamazuHelper.SendCommand("/y 【冲锋换位提醒】D2 " + stgroup[2] + " 进行换位");
+                            postNamazuHelper.SendCommand("/p 【冲锋换位提醒】D2 " + stgroup[2] + " 进行换位<se.8>");
+                            if (!settingContainer.FunctionSetting.P2Step2MarkDisabled)
+                            {
+                                postNamazuHelper.SendCommand("/mk circle <" + settingContainer.PlayerSetting.PlayerIndex[stgroup[2]] + ">");
+                            }
+                            Clear();
+                        }
+
+                    }
+                    if (stgroup.Contains(p2Step2AttackPlayer[0]) && stgroup.Contains(p2Step2AttackPlayer[1]))
+                    {
+                        if (settingContainer.FunctionSetting.P2Step2Enable)
+                        {
+                            postNamazuHelper.SendCommand("/y 【冲锋换位提醒】D1 " + mtgroup[2] + " 进行换位");
+                            postNamazuHelper.SendCommand("/p 【冲锋换位提醒】D1 " + mtgroup[2] + " 进行换位<se.8>");
+                            if (!settingContainer.FunctionSetting.P2Step2MarkDisabled)
+                            {
+                                postNamazuHelper.SendCommand("/mk circle <" + settingContainer.PlayerSetting.PlayerIndex[mtgroup[2]] + ">");
+                            }
+                            Clear();
+                        }
+
+                    }
+                }
+            }
+            Log.Print("二运点名" + playerId + ",顺位:" + i);
         }
 
         //二运陨石预站位
-        public void P2Step3Process(string log, string[] playerSetting)
+        public void P2Step3Process(string log)
         {
             string logSubString = log.Substring(log.IndexOf("]"));
             string playerId = logSubString.Split(':')[2];
@@ -347,7 +325,7 @@ namespace DragonSongRepriseHelper
             Log.Print("陨石点名" + playerId);
             if (p2Step3AttackPlayer.Count == 2)
             {
-                if (settingContainer.Get("p2step3enable") == null || settingContainer.Get("p2step3enable") == "false")
+                if (!settingContainer.FunctionSetting.P2Step3Enable)
                 {
                     return;
                 }
@@ -355,23 +333,17 @@ namespace DragonSongRepriseHelper
                 string[] group2 = new string[2];//C点组
                 string[] group3 = new string[2];//D点组
                 string[] group4 = new string[2];//B点组
-                foreach (var item in playerSetting)
-                {
-                    switch (item.Split(',')[1])
-                    {
-                        case "MT": group1[0] = item.Split(',')[0]; break;
-                        case "D1": group1[1] = item.Split(',')[0]; break;
-                        case "ST": group2[0] = item.Split(',')[0]; break;
-                        case "D2": group2[1] = item.Split(',')[0]; break;
-                        case "H1": group3[0] = item.Split(',')[0]; break;
-                        case "D3": group3[1] = item.Split(',')[0]; break;
-                        case "H2": group4[0] = item.Split(',')[0]; break;
-                        case "D4": group4[1] = item.Split(',')[0]; break;
-                    }
-                }
+                group1[0] = settingContainer.PlayerSetting.MT;
+                group1[1] = settingContainer.PlayerSetting.D1;
+                group2[0] = settingContainer.PlayerSetting.ST;
+                group2[1] = settingContainer.PlayerSetting.D2;
+                group3[0] = settingContainer.PlayerSetting.H1;
+                group3[1] = settingContainer.PlayerSetting.D3;
+                group4[0] = settingContainer.PlayerSetting.H2;
+                group4[1] = settingContainer.PlayerSetting.D4;
 
                 //AC点名 不处理
-                if((group1.Contains(p2Step3AttackPlayer[0]) && group2.Contains(p2Step3AttackPlayer[1])) || (group2.Contains(p2Step3AttackPlayer[0]) && group1.Contains(p2Step3AttackPlayer[1])))
+                if ((group1.Contains(p2Step3AttackPlayer[0]) && group2.Contains(p2Step3AttackPlayer[1])) || (group2.Contains(p2Step3AttackPlayer[0]) && group1.Contains(p2Step3AttackPlayer[1])))
                 {
                     p2Step3AttackGroupType = "AC";
                     p2Step3AttackGroup[0] = group1;
@@ -450,16 +422,16 @@ namespace DragonSongRepriseHelper
         //二运放陨石
         public void P2Step4Process(string log, string[] playerSetting)
         {
-            if (settingContainer.Get("p2step3enable") == null || settingContainer.Get("p2step3enable") == "false")
+            if (!settingContainer.FunctionSetting.P2Step3Enable)
             {
                 return;
             }
-            if (settingContainer.Get("p2step4enable") == null || settingContainer.Get("p2step4enable") == "false")
+            if (!settingContainer.FunctionSetting.P2Step4Enable)
             {
                 return;
             }
             //陨石点名了 进行处理
-            if(p2Step3AttackPlayer.Count == 2)
+            if (p2Step3AttackPlayer.Count == 2)
             {
                 if(p2Step4TowerCount == 8)
                 {
@@ -483,13 +455,13 @@ namespace DragonSongRepriseHelper
                             postNamazuHelper.SendCommand("/y 【陨石飙车提醒】120度塔出现,C点组注意陨石间距");
                             Log.Print("阴间塔命中,groupType:" + p2Step3AttackGroupType);
                             //A点有右塔，可建议换位
-                            if (settingContainer.Get("p2step4ChangeTowerEnable") == "true" && p2Step4OutTower.tAOutRight)
+                            if (settingContainer.FunctionSetting.P2Step4ChangeTowerEnable && p2Step4OutTower.tAOutRight)
                             {
                                 string player1 = p2Step3AttackGroup[0][0];
                                 string player2 = p2Step3AttackGroup[0][1];
                                 postNamazuHelper.SendCommand("/p 【陨石踩塔换位提醒】A组" + player1 + "可与" + player2 + "进行换位");
-                                postNamazuHelper.SendCommand("/mk attack <" + Utils.GetPlayerIndex(playerSetting, player1) + ">");
-                                postNamazuHelper.SendCommand("/mk attack <" + Utils.GetPlayerIndex(playerSetting, player2) + ">");
+                                postNamazuHelper.SendCommand("/mk attack <" + settingContainer.PlayerSetting.PlayerIndex[player1] + ">");
+                                postNamazuHelper.SendCommand("/mk attack <" + settingContainer.PlayerSetting.PlayerIndex[player2] + ">");
                                 Clear();
                             }
                         }
@@ -505,8 +477,8 @@ namespace DragonSongRepriseHelper
                                 string player1 = p2Step3AttackGroup[1][0];
                                 string player2 = p2Step3AttackGroup[1][1];
                                 postNamazuHelper.SendCommand("/p 【陨石踩塔换位提醒】C组" + player1 + "可与" + player2 + "进行换位");
-                                postNamazuHelper.SendCommand("/mk attack <" + Utils.GetPlayerIndex(playerSetting, player1) + ">");
-                                postNamazuHelper.SendCommand("/mk attack <" + Utils.GetPlayerIndex(playerSetting, player2) + ">");
+                                postNamazuHelper.SendCommand("/mk attack <" + settingContainer.PlayerSetting.PlayerIndex[player1] + ">");
+                                postNamazuHelper.SendCommand("/mk attack <" + settingContainer.PlayerSetting.PlayerIndex[player2] + ">");
                                 Clear();
                             }
                         }
@@ -526,8 +498,8 @@ namespace DragonSongRepriseHelper
                                 string player1 = p2Step3AttackGroup[0][0];
                                 string player2 = p2Step3AttackGroup[0][1];
                                 postNamazuHelper.SendCommand("/p 【陨石踩塔换位提醒】B组" + player1 + "可与" + player2 + "进行换位");
-                                postNamazuHelper.SendCommand("/mk attack <" + Utils.GetPlayerIndex(playerSetting, player1) + ">");
-                                postNamazuHelper.SendCommand("/mk attack <" + Utils.GetPlayerIndex(playerSetting, player2) + ">");
+                                postNamazuHelper.SendCommand("/mk attack <" + settingContainer.PlayerSetting.PlayerIndex[player1] + ">");
+                                postNamazuHelper.SendCommand("/mk attack <" + settingContainer.PlayerSetting.PlayerIndex[player2] + ">");
                                 Clear();
                             }
                         }
@@ -541,8 +513,8 @@ namespace DragonSongRepriseHelper
                                 string player1 = p2Step3AttackGroup[1][0];
                                 string player2 = p2Step3AttackGroup[1][1];
                                 postNamazuHelper.SendCommand("/p 【陨石踩塔换位提醒】D组" + player1 + "可与" + player2 + "进行换位");
-                                postNamazuHelper.SendCommand("/mk attack <" + Utils.GetPlayerIndex(playerSetting, player1) + ">");
-                                postNamazuHelper.SendCommand("/mk attack <" + Utils.GetPlayerIndex(playerSetting, player2) + ">");
+                                postNamazuHelper.SendCommand("/mk attack <" + settingContainer.PlayerSetting.PlayerIndex[player1] + ">");
+                                postNamazuHelper.SendCommand("/mk attack <" + settingContainer.PlayerSetting.PlayerIndex[player2] + ">");
                                 Clear();
                             }
                         }
@@ -559,21 +531,20 @@ namespace DragonSongRepriseHelper
                 new Thread(() =>
                 {
                     Thread.Sleep(5000);
-                    string postNamazuUrl = settingContainer.Get("post_namazu_url");
                     postNamazuHelper.SendCommand("/mk off <1>");
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                     postNamazuHelper.SendCommand("/mk off <2>");
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                     postNamazuHelper.SendCommand("/mk off <3>");
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                     postNamazuHelper.SendCommand("/mk off <4>");
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                     postNamazuHelper.SendCommand("/mk off <5>");
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                     postNamazuHelper.SendCommand("/mk off <6>");
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                     postNamazuHelper.SendCommand("/mk off <7>");
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                     postNamazuHelper.SendCommand("/mk off <8>");
                     clear = false;
                 }).Start();

@@ -24,11 +24,11 @@ namespace DragonSongRepriseHelper.SettingModel
 
         public string D4 { get; set; }
 
-        public string[] PlayerByIndex { get; set; }
+        public Dictionary<string, int> PlayerIndex { get; set; }
 
         public PlayerSetting()
         {
-            PlayerByIndex = new string[8];
+            PlayerIndex = new Dictionary<string, int>();
         }
 
         public bool isSettingOk()
@@ -37,22 +37,17 @@ namespace DragonSongRepriseHelper.SettingModel
                 && !string.IsNullOrEmpty(D1) && !string.IsNullOrEmpty(D2) && !string.IsNullOrEmpty(D3) && !string.IsNullOrEmpty(D3);
         }
 
-        public void SetIndex(string[] playerIds)
-        {
-            this.PlayerByIndex = playerIds;
-        }
-
         public string[] GetSettingText()
         {
             string[] playerSettings = new string[8];
-            playerSettings[0] = "playerMT=" + MT;
-            playerSettings[1] = "playerST=" + ST;
-            playerSettings[2] = "playerH1=" + H1;
-            playerSettings[3] = "playerH2=" + H2;
-            playerSettings[4] = "playerD1=" + D1;
-            playerSettings[5] = "playerD2=" + D2;
-            playerSettings[6] = "playerD3=" + D3;
-            playerSettings[7] = "playerD4=" + D4;
+            playerSettings[0] = "playerMT=" + MT + "|" + PlayerIndex[MT];
+            playerSettings[1] = "playerST=" + ST + "|" + PlayerIndex[ST];
+            playerSettings[2] = "playerH1=" + H1 + "|" + PlayerIndex[H1];
+            playerSettings[3] = "playerH2=" + H2 + "|" + PlayerIndex[H2];
+            playerSettings[4] = "playerD1=" + D1 + "|" + PlayerIndex[D1];
+            playerSettings[5] = "playerD2=" + D2 + "|" + PlayerIndex[D2];
+            playerSettings[6] = "playerD3=" + D3 + "|" + PlayerIndex[D3];
+            playerSettings[7] = "playerD4=" + D4 + "|" + PlayerIndex[D4];
 
             return playerSettings;
         }
@@ -91,6 +86,79 @@ namespace DragonSongRepriseHelper.SettingModel
             {
                 this.D4 = configTexts["D4"];
             }
+        }
+
+        public string GetJobByPlayerId(string playerId)
+        {
+            if(MT == playerId)
+            {
+                return "MT";
+            }
+            else if(ST == playerId)
+            {
+                return "ST";
+            }
+            else if (H1 == playerId)
+            {
+                return "H1";
+            }
+            else if (H2 == playerId)
+            {
+                return "H2";
+            }
+            else if (D1 == playerId)
+            {
+                return "D1";
+            }
+            else if (D2 == playerId)
+            {
+                return "D2";
+            }
+            else if (D3 == playerId)
+            {
+                return "D3";
+            }
+            else if (D4 == playerId)
+            {
+                return "D4";
+            }
+            return null;
+        }
+
+        public bool SetPlayerFromPlayerText(string text)
+        {
+            string[] textStrArray = text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            int index = 1;
+            foreach(var item in textStrArray)
+            {
+                string playerId = item.Split(',')[0];
+                string playerJob = item.Split(',')[1];
+
+                switch (playerJob)
+                {
+                    case "MT": MT = playerId;PlayerIndex.Add(playerId, index);index++;break;
+                    case "ST": ST = playerId; PlayerIndex.Add(playerId, index); index++; break;
+                    case "H1": H1 = playerId; PlayerIndex.Add(playerId, index); index++; break;
+                    case "H2": H2 = playerId; PlayerIndex.Add(playerId, index); index++; break;
+                    case "D1": D1 = playerId; PlayerIndex.Add(playerId, index); index++; break;
+                    case "D2": D2 = playerId; PlayerIndex.Add(playerId, index); index++; break;
+                    case "D3": D3 = playerId; PlayerIndex.Add(playerId, index); index++; break;
+                    case "D4": D4 = playerId; PlayerIndex.Add(playerId, index); index++; break;
+                }
+            }
+
+            return index == 9;
+        }
+
+        public string BuildPlayerTextBoxStr()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(var item in PlayerIndex)
+            {
+                sb.Append(item.Key).Append(",").Append(this.GetJobByPlayerId(item.Key)).Append("\r\n");
+            }
+
+            return sb.ToString();
         }
     }
 

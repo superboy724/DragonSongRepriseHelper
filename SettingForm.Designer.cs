@@ -30,6 +30,8 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label9 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.btnTestBus = new System.Windows.Forms.Button();
@@ -52,8 +54,6 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.btnLogClear = new System.Windows.Forms.Button();
             this.tbLog = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -90,6 +90,24 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "基础设置";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(391, 224);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(509, 12);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "使用以下的宏可读取小队信息，读取完毕后删除服务器名并设置职责（兼容繁华绝神兵科技宏）";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(391, 242);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(500, 21);
+            this.textBox1.TabIndex = 11;
+            this.textBox1.Text = "/e DSRH {<1>:<2>:<3>:<4>:<5>:<6>:<7>:<8>}";
             // 
             // label7
             // 
@@ -182,7 +200,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(856, 331);
+            this.tabPage2.Size = new System.Drawing.Size(910, 331);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "P2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -301,7 +319,7 @@
             this.tabPage3.Controls.Add(this.tbLog);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(856, 331);
+            this.tabPage3.Size = new System.Drawing.Size(910, 331);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Log";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -324,24 +342,6 @@
             this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.tbLog.Size = new System.Drawing.Size(730, 219);
             this.tbLog.TabIndex = 4;
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(391, 242);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(500, 21);
-            this.textBox1.TabIndex = 11;
-            this.textBox1.Text = "/e DSRH {<1>:<2>:<3>:<4>:<5>:<6>:<7>:<8>}";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(391, 224);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(509, 12);
-            this.label9.TabIndex = 12;
-            this.label9.Text = "使用以下的宏可读取小队信息，读取完毕后删除服务器名并设置职责（兼容繁华绝神兵科技宏）";
             // 
             // SettingForm
             // 

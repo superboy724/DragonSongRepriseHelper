@@ -30,24 +30,24 @@ namespace DragonSongRepriseHelper
 
         private void tbPlayers_TextChanged_1(object sender, EventArgs e)
         {
-            settingContainer.UpdateKey("players", tbPlayers.Text);
+            settingContainer.PlayerSetting.SetPlayerFromPlayerText(tbPlayers.Text);
         }
 
         private void tbPostNamazuUrl_TextChanged(object sender, EventArgs e)
         {
-            settingContainer.UpdateKey("post_namazu_url", tbPostNamazuUrl.Text);
+            settingContainer.FunctionSetting.PostNamazuSetting = tbPostNamazuUrl.Text;
         }
 
         private void SettingForm_Load(object sender, EventArgs e)
         {
-            tbPlayers.Text = settingContainer.Get("players");
-            tbPostNamazuUrl.Text = settingContainer.Get("post_namazu_url");
-            cbP2Step1Enable.Checked = settingContainer.Get("p2step1enable") == "true";
-            cbP2Step2Enable.Checked = settingContainer.Get("p2step2enable") == "true";
-            cbP2Step3Enable.Checked = settingContainer.Get("p2step3enable") == "true";
-            cbP2Step4Enable.Checked = settingContainer.Get("p2step4enable") == "true";
-            cbP2Step2MarkDisabled.Checked = settingContainer.Get("p2step2markdisabled") == "true";
-            cbP2Step4ChangeTowerEnable.Checked = settingContainer.Get("p2step4ChangeTowerEnable") == "true";
+            tbPlayers.Text = settingContainer.PlayerSetting.BuildPlayerTextBoxStr();
+            tbPostNamazuUrl.Text = settingContainer.FunctionSetting.PostNamazuSetting;
+            cbP2Step1Enable.Checked = settingContainer.FunctionSetting.P2Step1Enable;
+            cbP2Step2Enable.Checked = settingContainer.FunctionSetting.P2Step2Enable;
+            cbP2Step3Enable.Checked = settingContainer.FunctionSetting.P2Step3Enable;
+            cbP2Step4Enable.Checked = settingContainer.FunctionSetting.P2Step4Enable;
+            cbP2Step2MarkDisabled.Checked = settingContainer.FunctionSetting.P2Step2MarkDisabled;
+            cbP2Step4ChangeTowerEnable.Checked = settingContainer.FunctionSetting.P2Step4ChangeTowerEnable;
 
             if (string.IsNullOrEmpty(tbPostNamazuUrl.Text))
             {
@@ -78,7 +78,7 @@ namespace DragonSongRepriseHelper
 
         private void cbP2Step1Enable_CheckedChanged(object sender, EventArgs e)
         {
-            this.settingContainer.UpdateKey("p2step1enable", cbP2Step1Enable.Checked ? "true" : "false");
+            this.settingContainer.FunctionSetting.P2Step1Enable = cbP2Step1Enable.Checked;
         }
 
         private void cbP2Step2Enable_CheckedChanged(object sender, EventArgs e)
@@ -91,7 +91,7 @@ namespace DragonSongRepriseHelper
             {
                 cbP2Step2MarkDisabled.Enabled = false;
             }
-            this.settingContainer.UpdateKey("p2step2enable", cbP2Step2Enable.Checked ? "true" : "false");
+            this.settingContainer.FunctionSetting.P2Step2Enable = cbP2Step2Enable.Checked;
         }
 
         private void btnTestBus_Click(object sender, EventArgs e)
@@ -118,12 +118,12 @@ namespace DragonSongRepriseHelper
                     cbP2Step4ChangeTowerEnable.Enabled = true;
                 }
             }
-            this.settingContainer.UpdateKey("p2step3enable", cbP2Step3Enable.Checked ? "true" : "false");
+            cbP2Step2Enable.Checked = cbP2Step3Enable.Checked;
         }
 
         private void cbP2Step2MarkEnable_CheckedChanged(object sender, EventArgs e)
         {
-            this.settingContainer.UpdateKey("p2step2markdisabled", cbP2Step2MarkDisabled.Checked ? "true" : "false");
+            cbP2Step2Enable.Checked = cbP2Step2MarkDisabled.Checked;
         }
 
         private void cbP2Step4Enable_CheckedChanged(object sender, EventArgs e)
@@ -136,12 +136,12 @@ namespace DragonSongRepriseHelper
             {
                 cbP2Step4ChangeTowerEnable.Enabled = true;
             }
-            this.settingContainer.UpdateKey("p2step4enable", cbP2Step4Enable.Checked ? "true" : "false");
+            cbP2Step2Enable.Checked = cbP2Step4Enable.Checked;
         }
 
         private void cbP2Step4ChangeTowerEnable_CheckedChanged(object sender, EventArgs e)
         {
-            this.settingContainer.UpdateKey("p2step4ChangeTowerEnable", cbP2Step4ChangeTowerEnable.Checked ? "true" : "false");
+            this.settingContainer.FunctionSetting.P2Step4ChangeTowerEnable = cbP2Step4ChangeTowerEnable.Checked;
         }
 
         public void SetPlayers(List<string> players)
@@ -151,8 +151,6 @@ namespace DragonSongRepriseHelper
             {
                 tbPlayers.AppendText(item + "\r\n");
             }
-
-            settingContainer.UpdateKey("players", tbPlayers.Text);
         }
     }
 }
