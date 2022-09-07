@@ -62,6 +62,9 @@
     <Compile Include="SettingForm.Designer.cs">
       <DependentUpon>SettingForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SettingModel\FunctionSetting.cs" />
+    <Compile Include="SettingModel\Player.cs" />
+    <Compile Include="SettingModel\SettingModel.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
