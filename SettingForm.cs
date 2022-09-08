@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace DragonSongRepriseHelper
 {
@@ -46,6 +47,7 @@ namespace DragonSongRepriseHelper
             cbP2Step4Enable.Checked = settingContainer.FunctionSetting.P2Step4Enable;
             cbP2Step2MarkDisabled.Checked = settingContainer.FunctionSetting.P2Step2MarkDisabled;
             cbP2Step4ChangeTowerEnable.Checked = settingContainer.FunctionSetting.P2Step4ChangeTowerEnable;
+            cbP3Step1Enable.Checked = settingContainer.FunctionSetting.P3Step1Enable;
 
             if (string.IsNullOrEmpty(tbPostNamazuUrl.Text))
             {
@@ -145,6 +147,16 @@ namespace DragonSongRepriseHelper
             {
                 tbPlayers.AppendText(item + "\r\n");
             }
+        }
+
+        private void lLtoNga_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(@"https://bbs.nga.cn/read.php?tid=32379004&page=e");
+        }
+
+        private void cbP3Step1Enable_CheckedChanged(object sender, EventArgs e)
+        {
+            this.settingContainer.FunctionSetting.P3Step1Enable = cbP3Step1Enable.Checked;
         }
     }
 }

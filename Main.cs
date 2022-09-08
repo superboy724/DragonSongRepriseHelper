@@ -25,6 +25,16 @@ namespace DragonSongRepriseHelper
         const int sword2Mark = 0x33;
         const int meteor = 0x11D;
 
+        //P3麻将点名
+        const int mahjong1 = 0x13F;
+        const int mahjong2 = mahjong1 + 1;
+        const int mahjong3 = mahjong1 + 2;
+        //P3放塔点名
+        const int towerPosInPlace = 0xAC3;
+        const int towerPosFront = 0xAC4;
+        const int towerPosBack = 0xAC5;
+        //AC3 原地 AC4上箭头 AC5下箭头
+
         string[] p2Step2AttackPlayer = new string[2];
         List<string> p2Step3AttackPlayer = new List<string>();
         List<string> p2Step1AttackPlayer = new List<string>();
@@ -32,6 +42,10 @@ namespace DragonSongRepriseHelper
         int p2Step4TowerCount = 0;
         string p2Step3AttackGroupType = "";
         string[][] p2Step3AttackGroup = new string[2][];
+        List<string> p3Step1MarkMahjong1Player = new List<string>(3);
+        List<string> p3Step1MarkMahjong2Player = new List<string>(2);
+        List<string> p3Step1MarkMahjong3Player = new List<string>(3);
+        Dictionary<string, int> p3Step1TowerPos = new Dictionary<string, int>();
 
         public void DeInitPlugin()
         {
@@ -71,6 +85,11 @@ namespace DragonSongRepriseHelper
             p2Step4OutTower = new P2Step4OutTower();
             p2Step4TowerCount = 0;
             p2Step3AttackGroupType = "";
+            p2Step3AttackGroup = new string[2][];
+            p3Step1MarkMahjong1Player = new List<string>(3);
+            p3Step1MarkMahjong2Player = new List<string>(2);
+            p3Step1MarkMahjong3Player = new List<string>(3);
+            p3Step1TowerPos = new Dictionary<string, int>();
             markOffset = -1;
             Log.Print("战斗结束");
         }
@@ -124,6 +143,11 @@ namespace DragonSongRepriseHelper
                     if (trueCode == meteor)
                     {
                         P2Step3Process(log);
+                    }
+                    //点麻将
+                    if(trueCode == mahjong1 || trueCode == mahjong2 || trueCode == mahjong3)
+                    {
+                        P3Step1PreProcess(log);
                     }
                 }
                 catch (Exception ex)
@@ -205,6 +229,10 @@ namespace DragonSongRepriseHelper
                 {
                     settingForm.SetPlayers(playerSettingStrs);
                 }
+            });
+            //注册P3尼德霍格放塔点名事件
+            logreader.RegisterEvent(26, "^(.+?)StatusAdd(.+?)\\:(AC3|AC4|AC5)\\:(\\s|\\S)+$", log => {
+                P3Step1Process(log);
             });
 
             logreader.Init();
@@ -524,13 +552,295 @@ namespace DragonSongRepriseHelper
             
         }
 
-        public void Clear()
+        //三运点麻将
+        public void P3Step1PreProcess(string log)
+        {
+            string logSubString = log.Substring(log.IndexOf("]"));
+            string markCodeStr = logSubString.Split(':')[5];
+            int markCode = Convert.ToInt32(markCodeStr, 16);
+            int trueCode = markCode - markOffset;
+            string playerId = logSubString.Split(':')[2];
+
+            if (trueCode == mahjong1)
+            {
+                Log.Print("麻将1点名:" + playerId);
+                p3Step1MarkMahjong1Player.Add(playerId);
+            }
+            if (trueCode == mahjong2)
+            {
+                Log.Print("麻将2点名:" + playerId);
+                p3Step1MarkMahjong2Player.Add(playerId);
+            }
+            if (trueCode == mahjong3)
+            {
+                Log.Print("麻将3点名:" + playerId);
+                p3Step1MarkMahjong3Player.Add(playerId);
+            }
+        }
+
+        //三运点箭头圆圈
+        public void P3Step1Process(string log)
+        {
+            //00|2022-09-07T20:54:36.0000000+08:00|112F||陷入了“选定目标：黑暗破碎冲”效果。|6ce23a831a3c4b46  上箭头
+            //00|2022-09-07T20:54:36.0000000+08:00|112F||太阳海岸陷入了“选定目标：黑暗回避跳跃”效果。|03617372651d4871 下箭头
+            //[2022-09-07T20:54:37.1610000+08:00] StatusAdd 1A:AC3:选定目标：黑暗高跳:9.00:E0000000::1005B87C:露缇:00:62713:
+
+            string logSubString = log.Substring(log.IndexOf("]"));
+            string gainCodeStr = logSubString.Split(':')[1];
+            string gainName = logSubString.Split(':')[2];
+            string playerId = logSubString.Split(':')[7];
+
+            Log.Print("P3放塔点名" + playerId + " 类型:" + gainCodeStr + " 技能名:" + gainName);
+
+            if (p3Step1TowerPos.ContainsKey(playerId))
+            {
+                Log.Print(playerId + "点名存在 跳过");
+                return;
+            }
+
+            p3Step1TowerPos.Add(playerId, Convert.ToInt32(gainCodeStr, 16));
+
+            if(p3Step1TowerPos.Count == 8 && p3Step1MarkMahjong1Player.Count == 3 && p3Step1MarkMahjong2Player.Count == 2 && p3Step1MarkMahjong3Player.Count == 3)
+            {
+                //小组顺序，类型，顺位,玩家ID
+                List<Tuple<int, string, string,string>> commands = new List<Tuple<int, string, string, string>>();
+                bool group1NotAllInPlace = false;
+                bool group2NotAllInPlace = false;
+                bool group3NotAllInPlace = false;
+                foreach (var item in p3Step1MarkMahjong1Player)
+                {
+                    if (p3Step1TowerPos.ContainsKey(item))
+                    {
+                        group1NotAllInPlace = group1NotAllInPlace | p3Step1TowerPos[item] != towerPosInPlace;
+                    }
+                }
+                foreach (var item in p3Step1MarkMahjong2Player)
+                {
+                    if (p3Step1TowerPos.ContainsKey(item))
+                    {
+                        group2NotAllInPlace = group2NotAllInPlace | p3Step1TowerPos[item] != towerPosInPlace;
+                    }
+                }
+                foreach (var item in p3Step1MarkMahjong3Player)
+                {
+                    if (p3Step1TowerPos.ContainsKey(item))
+                    {
+                        group3NotAllInPlace = group3NotAllInPlace | p3Step1TowerPos[item] != towerPosInPlace;
+                    }
+                }
+
+                Log.Print("麻将1组是否有前后塔：" + group1NotAllInPlace);
+                Log.Print("麻将2组是否有前后塔：" + group2NotAllInPlace);
+                Log.Print("麻将3组是否有前后塔：" + group3NotAllInPlace);
+
+                //麻将1组标点
+                if (group1NotAllInPlace)
+                {
+                    foreach (var item in p3Step1MarkMahjong1Player)
+                    {
+                        if (p3Step1TowerPos.ContainsKey(item))
+                        {
+                            if (p3Step1TowerPos[item] == towerPosInPlace)
+                            {
+                                commands.Add(new Tuple<int, string, string,string>(settingContainer.PlayerSetting.PlayerIndex[item], "attack", "3",item));
+                            }
+                            if (p3Step1TowerPos[item] == towerPosFront)
+                            {
+                                commands.Add(new Tuple<int, string, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "attack", "1", item));
+                            }
+                            if (p3Step1TowerPos[item] == towerPosBack)
+                            {
+                                commands.Add(new Tuple<int, string, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "attack", "2", item));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var item in p3Step1MarkMahjong1Player)
+                    {
+                        commands.Add(new Tuple<int, string, string,string>(settingContainer.PlayerSetting.PlayerIndex[item], "attack", "",item));
+                    }
+                }
+
+                //麻将2组标点
+                if (group2NotAllInPlace)
+                {
+                    foreach (var item in p3Step1MarkMahjong2Player)
+                    {
+                        if (p3Step1TowerPos.ContainsKey(item))
+                        {
+                            if (p3Step1TowerPos[item] == towerPosFront)
+                            {
+                                commands.Add(new Tuple<int, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "stop", "1"));
+                            }
+                            if (p3Step1TowerPos[item] == towerPosBack)
+                            {
+                                commands.Add(new Tuple<int, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "stop", "2"));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var item in p3Step1MarkMahjong2Player)
+                    {
+                        commands.Add(new Tuple<int, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "stop", ""));
+                    }
+                }
+
+                //麻将3组标点
+                if (group3NotAllInPlace)
+                {
+                    foreach (var item in p3Step1MarkMahjong3Player)
+                    {
+                        if (p3Step1TowerPos.ContainsKey(item))
+                        {
+                            if (p3Step1TowerPos[item] == towerPosInPlace)
+                            {
+                                commands.Add(new Tuple<int, string, string,string>(settingContainer.PlayerSetting.PlayerIndex[item], "bind", "3", item));
+                            }
+                            if (p3Step1TowerPos[item] == towerPosFront)
+                            {
+                                commands.Add(new Tuple<int, string, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "bind", "1", item));
+                            }
+                            if (p3Step1TowerPos[item] == towerPosBack)
+                            {
+                                commands.Add(new Tuple<int, string, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "bind", "2", item));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var item in p3Step1MarkMahjong3Player)
+                    {
+                        commands.Add(new Tuple<int, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "bind", ""));
+                    }
+                }
+
+                foreach(var item in commands)
+                {
+                    Log.Print("头顶标记:" + item.Item4 + ",type:" + item.Item2 + ",index:" + item.Item3);
+                }
+
+                if (settingContainer.FunctionSetting.P3Step1Enable)
+                {
+                    foreach (var item in commands)
+                    {
+                        postNamazuHelper.SendCommand("/mk " + item.Item2 + item.Item3 + " <" + item.Item1 + ">");
+                    }
+
+                    postNamazuHelper.SendCommand("/y 【放塔提醒】");
+                    //一组消息提醒
+                    if (group1NotAllInPlace)
+                    {
+                        StringBuilder str = new StringBuilder();
+                        str.Append("/y 麻将1：");
+                        foreach (var item in commands)
+                        {
+                            if (item.Item2 == "attack")
+                            {
+                                switch (item.Item3)
+                                {
+                                    case "1": str.Append("上箭头<攻击1>(").Append(item.Item4).Append(") "); break;
+                                    case "2": str.Append("下箭头<攻击2>(").Append(item.Item4).Append(") "); break;
+                                    case "3": str.Append("原地塔<攻击3>(").Append(item.Item4).Append(")"); break;
+                                }
+                            }
+                        }
+                        postNamazuHelper.SendCommand(str.ToString());
+                    }
+                    else
+                    {
+                        StringBuilder str = new StringBuilder();
+                        str.Append("/y 麻将1(均为原地塔)：");
+                        foreach (var item in commands)
+                        {
+                            if (item.Item2 == "attack")
+                            {
+                                str.Append(item.Item4).Append(" ");
+                            }
+                        }
+
+                        postNamazuHelper.SendCommand(str.ToString());
+                    }
+                    //二组消息提醒
+                    if (group2NotAllInPlace)
+                    {
+                        StringBuilder str = new StringBuilder();
+                        str.Append("/y 麻将2：");
+                        foreach (var item in commands)
+                        {
+                            if (item.Item2 == "stop")
+                            {
+                                switch (item.Item3)
+                                {
+                                    case "1": str.Append("上箭头<禁止1>(").Append(item.Item4).Append(") "); break;
+                                    case "2": str.Append("下箭头<禁止2>(").Append(item.Item4).Append(") "); break;
+                                }
+                            }
+                        }
+                        postNamazuHelper.SendCommand(str.ToString());
+                    }
+                    else
+                    {
+                        StringBuilder str = new StringBuilder();
+                        str.Append("/y 麻将2(均为原地塔)：");
+                        foreach (var item in commands)
+                        {
+                            if (item.Item2 == "stop")
+                            {
+                                str.Append(item.Item4).Append(" ");
+                            }
+                        }
+
+                        postNamazuHelper.SendCommand(str.ToString());
+                    }
+                    //三组消息提醒
+                    if (group3NotAllInPlace)
+                    {
+                        StringBuilder str = new StringBuilder();
+                        str.Append("/y 麻将3：");
+                        foreach (var item in commands)
+                        {
+                            if (item.Item2 == "bind")
+                            {
+                                switch (item.Item3)
+                                {
+                                    case "1": str.Append("上箭头<止步1>(").Append(item.Item4).Append(") "); break;
+                                    case "2": str.Append("下箭头<止步2>(").Append(item.Item4).Append(") "); break;
+                                    case "3": str.Append("原地塔<止步3>(").Append(item.Item4).Append(")"); break;
+                                }
+                            }
+                        }
+                        postNamazuHelper.SendCommand(str.ToString());
+                    }
+                    else
+                    {
+                        StringBuilder str = new StringBuilder();
+                        str.Append("/y 麻将3(均为原地塔)：");
+                        foreach (var item in commands)
+                        {
+                            if (item.Item2 == "bind")
+                            {
+                                str.Append(item.Item4).Append(" ");
+                            }
+                        }
+
+                        postNamazuHelper.SendCommand(str.ToString());
+                    }
+                }
+            }
+        }
+
+        public void Clear(int wait = 5000)
         {
             if (!clear)
             {
                 new Thread(() =>
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(wait);
                     postNamazuHelper.SendCommand("/mk off <1>");
                     Thread.Sleep(100);
                     postNamazuHelper.SendCommand("/mk off <2>");

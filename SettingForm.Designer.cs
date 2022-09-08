@@ -52,12 +52,17 @@
             this.cbP2Step3Enable = new System.Windows.Forms.CheckBox();
             this.cbP2Step2Enable = new System.Windows.Forms.CheckBox();
             this.cbP2Step1Enable = new System.Windows.Forms.CheckBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.lLtoNga = new System.Windows.Forms.LinkLabel();
+            this.label11 = new System.Windows.Forms.Label();
+            this.cbP3Step1Enable = new System.Windows.Forms.CheckBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.btnLogClear = new System.Windows.Forms.Button();
             this.tbLog = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,6 +70,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
@@ -322,6 +328,50 @@
             this.cbP2Step1Enable.UseVisualStyleBackColor = true;
             this.cbP2Step1Enable.CheckedChanged += new System.EventHandler(this.cbP2Step1Enable_CheckedChanged);
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.lLtoNga);
+            this.tabPage4.Controls.Add(this.label11);
+            this.tabPage4.Controls.Add(this.cbP3Step1Enable);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(910, 331);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "P3";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // lLtoNga
+            // 
+            this.lLtoNga.AutoSize = true;
+            this.lLtoNga.Location = new System.Drawing.Point(50, 42);
+            this.lLtoNga.Name = "lLtoNga";
+            this.lLtoNga.Size = new System.Drawing.Size(23, 12);
+            this.lLtoNga.TabIndex = 7;
+            this.lLtoNga.TabStop = true;
+            this.lLtoNga.Text = "NGA";
+            this.lLtoNga.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lLtoNga_LinkClicked);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(12, 31);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(281, 24);
+            this.label11.TabIndex = 6;
+            this.label11.Text = "功能说明：麻将阶段通过头顶标记方便判断处理方式\r\n详见：";
+            // 
+            // cbP3Step1Enable
+            // 
+            this.cbP3Step1Enable.AutoSize = true;
+            this.cbP3Step1Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbP3Step1Enable.Location = new System.Drawing.Point(14, 12);
+            this.cbP3Step1Enable.Name = "cbP3Step1Enable";
+            this.cbP3Step1Enable.Size = new System.Drawing.Size(102, 16);
+            this.cbP3Step1Enable.TabIndex = 5;
+            this.cbP3Step1Enable.Text = "麻将分组标记";
+            this.cbP3Step1Enable.UseVisualStyleBackColor = true;
+            this.cbP3Step1Enable.CheckedChanged += new System.EventHandler(this.cbP3Step1Enable_CheckedChanged);
+            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.btnLogClear);
@@ -365,6 +415,8 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
@@ -400,5 +452,9 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label lbSettingPlayerStatus;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.LinkLabel lLtoNga;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.CheckBox cbP3Step1Enable;
     }
 }
