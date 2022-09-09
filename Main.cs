@@ -672,11 +672,11 @@ namespace DragonSongRepriseHelper
                         {
                             if (p3Step1TowerPos[item] == towerPosFront)
                             {
-                                commands.Add(new Tuple<int, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "stop", "1"));
+                                commands.Add(new Tuple<int, string, string,string>(settingContainer.PlayerSetting.PlayerIndex[item], "stop", "1", item));
                             }
                             if (p3Step1TowerPos[item] == towerPosBack)
                             {
-                                commands.Add(new Tuple<int, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "stop", "2"));
+                                commands.Add(new Tuple<int, string, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "stop", "2", item));
                             }
                         }
                     }
@@ -685,7 +685,7 @@ namespace DragonSongRepriseHelper
                 {
                     foreach (var item in p3Step1MarkMahjong2Player)
                     {
-                        commands.Add(new Tuple<int, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "stop", ""));
+                        commands.Add(new Tuple<int, string, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "stop", "", item));
                     }
                 }
 
@@ -715,7 +715,7 @@ namespace DragonSongRepriseHelper
                 {
                     foreach (var item in p3Step1MarkMahjong3Player)
                     {
-                        commands.Add(new Tuple<int, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "bind", ""));
+                        commands.Add(new Tuple<int, string, string, string>(settingContainer.PlayerSetting.PlayerIndex[item], "bind", "", item));
                     }
                 }
 
@@ -736,16 +736,16 @@ namespace DragonSongRepriseHelper
                     if (group1NotAllInPlace)
                     {
                         StringBuilder str = new StringBuilder();
-                        str.Append("/y 麻将1：");
+                        str.Append("/p 麻将1：");
                         foreach (var item in commands)
                         {
                             if (item.Item2 == "attack")
                             {
                                 switch (item.Item3)
                                 {
-                                    case "1": str.Append("上箭头<攻击1>(").Append(item.Item4).Append(") "); break;
-                                    case "2": str.Append("下箭头<攻击2>(").Append(item.Item4).Append(") "); break;
-                                    case "3": str.Append("原地塔<攻击3>(").Append(item.Item4).Append(")"); break;
+                                    case "1": str.Append("上箭头《攻击1》(").Append(item.Item4).Append(") "); break;
+                                    case "2": str.Append("下箭头《攻击2》(").Append(item.Item4).Append(") "); break;
+                                    case "3": str.Append("原地塔《攻击3》(").Append(item.Item4).Append(") "); break;
                                 }
                             }
                         }
@@ -754,7 +754,7 @@ namespace DragonSongRepriseHelper
                     else
                     {
                         StringBuilder str = new StringBuilder();
-                        str.Append("/y 麻将1(均为原地塔)：");
+                        str.Append("/p 麻将1(均为原地塔)：");
                         foreach (var item in commands)
                         {
                             if (item.Item2 == "attack")
@@ -769,15 +769,15 @@ namespace DragonSongRepriseHelper
                     if (group2NotAllInPlace)
                     {
                         StringBuilder str = new StringBuilder();
-                        str.Append("/y 麻将2：");
+                        str.Append("/p 麻将2：");
                         foreach (var item in commands)
                         {
                             if (item.Item2 == "stop")
                             {
                                 switch (item.Item3)
                                 {
-                                    case "1": str.Append("上箭头<禁止1>(").Append(item.Item4).Append(") "); break;
-                                    case "2": str.Append("下箭头<禁止2>(").Append(item.Item4).Append(") "); break;
+                                    case "1": str.Append("上箭头《禁止1》(").Append(item.Item4).Append(") "); break;
+                                    case "2": str.Append("下箭头《禁止2》(").Append(item.Item4).Append(") "); break;
                                 }
                             }
                         }
@@ -786,7 +786,7 @@ namespace DragonSongRepriseHelper
                     else
                     {
                         StringBuilder str = new StringBuilder();
-                        str.Append("/y 麻将2(均为原地塔)：");
+                        str.Append("/p 麻将2(均为原地塔)：");
                         foreach (var item in commands)
                         {
                             if (item.Item2 == "stop")
@@ -801,16 +801,16 @@ namespace DragonSongRepriseHelper
                     if (group3NotAllInPlace)
                     {
                         StringBuilder str = new StringBuilder();
-                        str.Append("/y 麻将3：");
+                        str.Append("/p 麻将3：");
                         foreach (var item in commands)
                         {
                             if (item.Item2 == "bind")
                             {
                                 switch (item.Item3)
                                 {
-                                    case "1": str.Append("上箭头<止步1>(").Append(item.Item4).Append(") "); break;
-                                    case "2": str.Append("下箭头<止步2>(").Append(item.Item4).Append(") "); break;
-                                    case "3": str.Append("原地塔<止步3>(").Append(item.Item4).Append(")"); break;
+                                    case "1": str.Append("上箭头《止步1》(").Append(item.Item4).Append(") "); break;
+                                    case "2": str.Append("下箭头《止步2》(").Append(item.Item4).Append(") "); break;
+                                    case "3": str.Append("原地塔《止步3》(").Append(item.Item4).Append(") "); break;
                                 }
                             }
                         }
@@ -819,7 +819,7 @@ namespace DragonSongRepriseHelper
                     else
                     {
                         StringBuilder str = new StringBuilder();
-                        str.Append("/y 麻将3(均为原地塔)：");
+                        str.Append("/p 麻将3(均为原地塔)：");
                         foreach (var item in commands)
                         {
                             if (item.Item2 == "bind")
@@ -830,6 +830,8 @@ namespace DragonSongRepriseHelper
 
                         postNamazuHelper.SendCommand(str.ToString());
                     }
+
+                    Clear(20000);
                 }
             }
         }
