@@ -31,10 +31,10 @@ namespace DragonSongRepriseHelper.SettingModel
             PlayerIndex = new Dictionary<string, int>();
         }
 
-        public bool isSettingOk()
+        public bool IsSettingOk()
         {
             return !string.IsNullOrEmpty(MT) && !string.IsNullOrEmpty(ST) && !string.IsNullOrEmpty(H1) && !string.IsNullOrEmpty(H2)
-                && !string.IsNullOrEmpty(D1) && !string.IsNullOrEmpty(D2) && !string.IsNullOrEmpty(D3) && !string.IsNullOrEmpty(D3);
+                && !string.IsNullOrEmpty(D1) && !string.IsNullOrEmpty(D2) && !string.IsNullOrEmpty(D3) && !string.IsNullOrEmpty(D4);
         }
 
         public string[] GetSettingText()
@@ -181,6 +181,14 @@ namespace DragonSongRepriseHelper.SettingModel
         public bool SetPlayerFromPlayerText(string text)
         {
             PlayerIndex.Clear();
+            MT = null;
+            ST = null;
+            H1 = null;
+            H2 = null;
+            D1 = null;
+            D2 = null;
+            D3 = null;
+            D4 = null;
             string[] textStrArray = text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             int index = 1;
             foreach(var item in textStrArray)

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Threading;
 
 namespace DragonSongRepriseHelper
 {
@@ -15,6 +16,7 @@ namespace DragonSongRepriseHelper
     {
         SettingContainer settingContainer;
         Action testFunction;
+        bool isDestory = false;
         public SettingForm(SettingContainer settingContainer,Action testFunction)
         {
             this.settingContainer = settingContainer;
@@ -30,6 +32,16 @@ namespace DragonSongRepriseHelper
         private void tbPlayers_TextChanged_1(object sender, EventArgs e)
         {
             settingContainer.PlayerSetting.SetPlayerFromPlayerText(tbPlayers.Text);
+            if (settingContainer.PlayerSetting.IsSettingOk())
+            {
+                this.lbSettingPlayerStatus.Text = "小队配置成功";
+                this.lbSettingPlayerStatus.ForeColor = Color.Green;
+            }
+            else
+            {
+                this.lbSettingPlayerStatus.Text = "等待配置小队";
+                this.lbSettingPlayerStatus.ForeColor = Color.Red;
+            }
         }
 
         private void tbPostNamazuUrl_TextChanged(object sender, EventArgs e)
@@ -69,6 +81,53 @@ namespace DragonSongRepriseHelper
             }
 
             Log.bindTb = this.tbLog;
+
+            if (settingContainer.PlayerSetting.IsSettingOk())
+            {
+                this.lbSettingPlayerStatus.Text = "小队配置成功";
+                this.lbSettingPlayerStatus.ForeColor = Color.Green;
+            }
+            else
+            {
+                this.lbSettingPlayerStatus.Text = "等待配置小队";
+                this.lbSettingPlayerStatus.ForeColor = Color.Red;
+            }
+
+            new Thread(() =>
+            {
+                while (true)
+                {
+                    Thread.Sleep(1000);
+                    if (settingContainer.IsRaidMode)
+                    {
+                        if (!this.IsHandleCreated)
+                        {
+                            return;
+                        }
+                        this.lbRaidStatus.BeginInvoke(new Action(() =>
+                        {
+                            this.lbRaidStatus.Text = "副本中";
+                            this.lbRaidStatus.ForeColor = Color.Green;
+                        }));
+
+                    }
+                    else
+                    {
+                        if (!this.IsHandleCreated)
+                        {
+                            return;
+                        }
+                        this.lbRaidStatus.BeginInvoke(new Action(() =>
+                        {
+                            this.lbRaidStatus.Text = "未在副本中";
+                            this.lbRaidStatus.ForeColor = Color.Red;
+                        }));
+                    }
+                }
+            }).Start();
+
+            this.lbRaidStatus.Text = "未在副本中";
+            this.lbRaidStatus.ForeColor = Color.Red;
         }
 
         private void btnLogClear_Click(object sender, EventArgs e)
@@ -157,6 +216,12 @@ namespace DragonSongRepriseHelper
         private void cbP3Step1Enable_CheckedChanged(object sender, EventArgs e)
         {
             this.settingContainer.FunctionSetting.P3Step1Enable = cbP3Step1Enable.Checked;
+        }
+
+        private void btnRunRaid_Click(object sender, EventArgs e)
+        {
+            this.settingContainer.IsRaidMode = true;
+            this.settingContainer.ForceRun = true;
         }
     }
 }

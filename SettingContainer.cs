@@ -13,6 +13,30 @@ namespace DragonSongRepriseHelper
         public FunctionSetting FunctionSetting { get; set; }
         public PlayerSetting PlayerSetting { get; set; }
 
+        bool isRaidMode = false;
+
+        //是否进本
+        public bool IsRaidMode
+        {
+            get
+            {
+                if (ForceRun)
+                {
+                    return true;
+                }
+                else
+                {
+                    return isRaidMode;
+                }
+            }
+            set
+            {
+                this.isRaidMode = value;
+            }
+        }
+
+        public bool ForceRun { get; set; }
+
         public SettingContainer()
         {
             FunctionSetting = new FunctionSetting();

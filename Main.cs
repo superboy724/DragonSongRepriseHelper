@@ -120,6 +120,10 @@ namespace DragonSongRepriseHelper
             {
                 try
                 {
+                    if (!settingContainer.IsRaidMode)
+                    {
+                        return;
+                    }
                     string logSubString = log.Substring(log.IndexOf("]"));
                     string markCodeStr = logSubString.Split(':')[5];
                     int markCode = Convert.ToInt32(markCodeStr, 16);
@@ -158,6 +162,10 @@ namespace DragonSongRepriseHelper
             //注册放塔事件
             logreader.RegisterEvent(20, "^(.+?)StartsCasting(.+?)圣骑士埃尔姆诺斯特\\:737C\\:信仰(\\s|\\S)+$", (log) =>
             {
+                if (!settingContainer.IsRaidMode)
+                {
+                    return;
+                }
                 try
                 {
                     P2Step4Process(log);
@@ -232,9 +240,29 @@ namespace DragonSongRepriseHelper
             });
             //注册P3尼德霍格放塔点名事件
             logreader.RegisterEvent(26, "^(.+?)StatusAdd(.+?)\\:(AC3|AC4|AC5)\\:(\\s|\\S)+$", log => {
+                if (!settingContainer.IsRaidMode)
+                {
+                    return;
+                }
                 P3Step1Process(log);
             });
-
+            //注册进入副本事件
+            logreader.RegisterEvent(01, "(\\s|\\S)+", log =>
+            {
+                Log.Print(log);
+                string logSubString = log.Substring(log.IndexOf("]"));
+                string raidCode = logSubString.Split(':')[1];
+                string raidName = logSubString.Split(':')[2];
+                if (raidCode == "3C8")
+                {
+                    settingContainer.IsRaidMode = true;
+                }
+                else
+                {
+                    settingContainer.IsRaidMode = false;
+                }
+                Log.Print("当前副本:" + raidName);
+            });
             logreader.Init();
         }
 

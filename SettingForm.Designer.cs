@@ -30,6 +30,8 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.lbRaidStatus = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.lbSettingPlayerStatus = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -59,6 +61,7 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.btnLogClear = new System.Windows.Forms.Button();
             this.tbLog = new System.Windows.Forms.TextBox();
+            this.btnRunRaid = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -80,6 +83,9 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.btnRunRaid);
+            this.tabPage1.Controls.Add(this.lbRaidStatus);
+            this.tabPage1.Controls.Add(this.label12);
             this.tabPage1.Controls.Add(this.label10);
             this.tabPage1.Controls.Add(this.lbSettingPlayerStatus);
             this.tabPage1.Controls.Add(this.label9);
@@ -99,6 +105,24 @@
             this.tabPage1.Text = "基础设置";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // lbRaidStatus
+            // 
+            this.lbRaidStatus.AutoSize = true;
+            this.lbRaidStatus.Location = new System.Drawing.Point(360, 7);
+            this.lbRaidStatus.Name = "lbRaidStatus";
+            this.lbRaidStatus.Size = new System.Drawing.Size(41, 12);
+            this.lbRaidStatus.TabIndex = 16;
+            this.lbRaidStatus.Text = "Status";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(303, 7);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(65, 12);
+            this.label12.TabIndex = 15;
+            this.label12.Text = "副本状态：";
+            // 
             // label10
             // 
             this.label10.AutoSize = true;
@@ -111,7 +135,7 @@
             // lbSettingPlayerStatus
             // 
             this.lbSettingPlayerStatus.AutoSize = true;
-            this.lbSettingPlayerStatus.Location = new System.Drawing.Point(240, 7);
+            this.lbSettingPlayerStatus.Location = new System.Drawing.Point(227, 7);
             this.lbSettingPlayerStatus.Name = "lbSettingPlayerStatus";
             this.lbSettingPlayerStatus.Size = new System.Drawing.Size(41, 12);
             this.lbSettingPlayerStatus.TabIndex = 13;
@@ -138,11 +162,11 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(858, 316);
+            this.label7.Location = new System.Drawing.Point(848, 316);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(47, 12);
+            this.label7.Size = new System.Drawing.Size(59, 12);
             this.label7.TabIndex = 10;
-            this.label7.Text = "ver:1.1";
+            this.label7.Text = "ver:1.2.1";
             // 
             // label6
             // 
@@ -402,6 +426,16 @@
             this.tbLog.Size = new System.Drawing.Size(730, 219);
             this.tbLog.TabIndex = 4;
             // 
+            // btnRunRaid
+            // 
+            this.btnRunRaid.Location = new System.Drawing.Point(223, 276);
+            this.btnRunRaid.Name = "btnRunRaid";
+            this.btnRunRaid.Size = new System.Drawing.Size(211, 37);
+            this.btnRunRaid.TabIndex = 17;
+            this.btnRunRaid.Text = "强制启动插件（副本状态不对的情况下）";
+            this.btnRunRaid.UseVisualStyleBackColor = true;
+            this.btnRunRaid.Click += new System.EventHandler(this.btnRunRaid_Click);
+            // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -456,5 +490,8 @@
         private System.Windows.Forms.LinkLabel lLtoNga;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.CheckBox cbP3Step1Enable;
+        private System.Windows.Forms.Label lbRaidStatus;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button btnRunRaid;
     }
 }
