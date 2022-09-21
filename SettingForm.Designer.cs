@@ -37,7 +37,7 @@
             this.lbSettingPlayerStatus = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.lbVersion = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tbPostNamazuUrl = new System.Windows.Forms.TextBox();
@@ -59,20 +59,20 @@
             this.lLtoNga = new System.Windows.Forms.LinkLabel();
             this.label11 = new System.Windows.Forms.Label();
             this.cbP3Step1Enable = new System.Windows.Forms.CheckBox();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.label14 = new System.Windows.Forms.Label();
+            this.cbP4Step2Enable = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.cbP4Step1Enable = new System.Windows.Forms.CheckBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.btnLogClear = new System.Windows.Forms.Button();
             this.tbLog = new System.Windows.Forms.TextBox();
-            this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.label13 = new System.Windows.Forms.Label();
-            this.cbP4Step1Enable = new System.Windows.Forms.CheckBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.cbP4Step2Enable = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            this.tabPage3.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -97,7 +97,7 @@
             this.tabPage1.Controls.Add(this.lbSettingPlayerStatus);
             this.tabPage1.Controls.Add(this.label9);
             this.tabPage1.Controls.Add(this.textBox1);
-            this.tabPage1.Controls.Add(this.label7);
+            this.tabPage1.Controls.Add(this.lbVersion);
             this.tabPage1.Controls.Add(this.label6);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.tbPostNamazuUrl);
@@ -176,14 +176,14 @@
             this.textBox1.TabIndex = 11;
             this.textBox1.Text = "/e DSRH {<1>:<2>:<3>:<4>:<5>:<6>:<7>:<8>}";
             // 
-            // label7
+            // lbVersion
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(848, 316);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(59, 12);
-            this.label7.TabIndex = 10;
-            this.label7.Text = "ver:1.2.1";
+            this.lbVersion.AutoSize = true;
+            this.lbVersion.Location = new System.Drawing.Point(848, 316);
+            this.lbVersion.Name = "lbVersion";
+            this.lbVersion.Size = new System.Drawing.Size(29, 12);
+            this.lbVersion.TabIndex = 10;
+            this.lbVersion.Text = "ver:";
             // 
             // label6
             // 
@@ -413,6 +413,62 @@
             this.cbP3Step1Enable.UseVisualStyleBackColor = true;
             this.cbP3Step1Enable.CheckedChanged += new System.EventHandler(this.cbP3Step1Enable_CheckedChanged);
             // 
+            // tabPage5
+            // 
+            this.tabPage5.Controls.Add(this.label14);
+            this.tabPage5.Controls.Add(this.cbP4Step2Enable);
+            this.tabPage5.Controls.Add(this.label13);
+            this.tabPage5.Controls.Add(this.cbP4Step1Enable);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(910, 331);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "P4";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(16, 92);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(353, 12);
+            this.label14.TabIndex = 12;
+            this.label14.Text = "功能说明：给第一次幻象冲点名的两人标记12（按职能顺序标记）";
+            // 
+            // cbP4Step2Enable
+            // 
+            this.cbP4Step2Enable.AutoSize = true;
+            this.cbP4Step2Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbP4Step2Enable.Location = new System.Drawing.Point(18, 73);
+            this.cbP4Step2Enable.Name = "cbP4Step2Enable";
+            this.cbP4Step2Enable.Size = new System.Drawing.Size(154, 16);
+            this.cbP4Step2Enable.TabIndex = 11;
+            this.cbP4Step2Enable.Text = "第一次幻象冲点名标记";
+            this.cbP4Step2Enable.UseVisualStyleBackColor = true;
+            this.cbP4Step2Enable.CheckedChanged += new System.EventHandler(this.cbP4Step2Enable_CheckedChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(16, 35);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(221, 12);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "功能说明：给需要红蓝换色的人头上标记";
+            // 
+            // cbP4Step1Enable
+            // 
+            this.cbP4Step1Enable.AutoSize = true;
+            this.cbP4Step1Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbP4Step1Enable.Location = new System.Drawing.Point(18, 16);
+            this.cbP4Step1Enable.Name = "cbP4Step1Enable";
+            this.cbP4Step1Enable.Size = new System.Drawing.Size(102, 16);
+            this.cbP4Step1Enable.TabIndex = 8;
+            this.cbP4Step1Enable.Text = "红蓝换色提醒";
+            this.cbP4Step1Enable.UseVisualStyleBackColor = true;
+            this.cbP4Step1Enable.CheckedChanged += new System.EventHandler(this.cbP4Step1Enable_CheckedChanged);
+            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.btnLogClear);
@@ -443,62 +499,6 @@
             this.tbLog.Size = new System.Drawing.Size(730, 219);
             this.tbLog.TabIndex = 4;
             // 
-            // tabPage5
-            // 
-            this.tabPage5.Controls.Add(this.label14);
-            this.tabPage5.Controls.Add(this.cbP4Step2Enable);
-            this.tabPage5.Controls.Add(this.label13);
-            this.tabPage5.Controls.Add(this.cbP4Step1Enable);
-            this.tabPage5.Location = new System.Drawing.Point(4, 22);
-            this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(910, 331);
-            this.tabPage5.TabIndex = 4;
-            this.tabPage5.Text = "P4";
-            this.tabPage5.UseVisualStyleBackColor = true;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(16, 35);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(221, 12);
-            this.label13.TabIndex = 9;
-            this.label13.Text = "功能说明：给需要红蓝换色的人头上标记";
-            // 
-            // cbP4Step1Enable
-            // 
-            this.cbP4Step1Enable.AutoSize = true;
-            this.cbP4Step1Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.cbP4Step1Enable.Location = new System.Drawing.Point(18, 16);
-            this.cbP4Step1Enable.Name = "cbP4Step1Enable";
-            this.cbP4Step1Enable.Size = new System.Drawing.Size(102, 16);
-            this.cbP4Step1Enable.TabIndex = 8;
-            this.cbP4Step1Enable.Text = "红蓝换色提醒";
-            this.cbP4Step1Enable.UseVisualStyleBackColor = true;
-            this.cbP4Step1Enable.CheckedChanged += new System.EventHandler(this.cbP4Step1Enable_CheckedChanged);
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(16, 92);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(353, 12);
-            this.label14.TabIndex = 12;
-            this.label14.Text = "功能说明：给第一次幻象冲点名的两人标记12（按职能顺序标记）";
-            // 
-            // cbP4Step2Enable
-            // 
-            this.cbP4Step2Enable.AutoSize = true;
-            this.cbP4Step2Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.cbP4Step2Enable.Location = new System.Drawing.Point(18, 73);
-            this.cbP4Step2Enable.Name = "cbP4Step2Enable";
-            this.cbP4Step2Enable.Size = new System.Drawing.Size(154, 16);
-            this.cbP4Step2Enable.TabIndex = 11;
-            this.cbP4Step2Enable.Text = "第一次幻象冲点名标记";
-            this.cbP4Step2Enable.UseVisualStyleBackColor = true;
-            this.cbP4Step2Enable.CheckedChanged += new System.EventHandler(this.cbP4Step2Enable_CheckedChanged);
-            // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -514,10 +514,10 @@
             this.tabPage2.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -542,7 +542,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox cbP2Step2MarkDisabled;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lbVersion;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox cbP2Step4ChangeTowerEnable;
         private System.Windows.Forms.Label label8;

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
+using System.Reflection;
 
 namespace DragonSongRepriseHelper
 {
@@ -130,6 +131,10 @@ namespace DragonSongRepriseHelper
 
             this.lbRaidStatus.Text = "未在副本中";
             this.lbRaidStatus.ForeColor = Color.Red;
+
+            Assembly a = Assembly.GetAssembly(typeof(SettingForm));
+            AssemblyName name = a.GetName();
+            lbVersion.Text = "ver:" + name.Version;
         }
 
         private void btnLogClear_Click(object sender, EventArgs e)
