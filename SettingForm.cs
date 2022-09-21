@@ -60,6 +60,8 @@ namespace DragonSongRepriseHelper
             cbP2Step2MarkDisabled.Checked = settingContainer.FunctionSetting.P2Step2MarkDisabled;
             cbP2Step4ChangeTowerEnable.Checked = settingContainer.FunctionSetting.P2Step4ChangeTowerEnable;
             cbP3Step1Enable.Checked = settingContainer.FunctionSetting.P3Step1Enable;
+            cbP4Step1Enable.Checked = settingContainer.FunctionSetting.P4Step1Enable;
+            cbP4Step2Enable.Checked = settingContainer.FunctionSetting.P4Step2Enable;
 
             if (string.IsNullOrEmpty(tbPostNamazuUrl.Text))
             {
@@ -222,6 +224,16 @@ namespace DragonSongRepriseHelper
         {
             this.settingContainer.IsRaidMode = true;
             this.settingContainer.ForceRun = true;
+        }
+
+        private void cbP4Step1Enable_CheckedChanged(object sender, EventArgs e)
+        {
+            this.settingContainer.FunctionSetting.P4Step1Enable = cbP4Step1Enable.Checked;
+        }
+
+        private void cbP4Step2Enable_CheckedChanged(object sender, EventArgs e)
+        {
+            this.settingContainer.FunctionSetting.P4Step2Enable = cbP4Step2Enable.Checked;
         }
     }
 }

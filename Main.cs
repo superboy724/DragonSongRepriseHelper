@@ -30,10 +30,13 @@ namespace DragonSongRepriseHelper
         const int mahjong2 = mahjong1 + 1;
         const int mahjong3 = mahjong1 + 2;
         //P3放塔点名
+        //AC3 原地 AC4上箭头 AC5下箭头
         const int towerPosInPlace = 0xAC3;
         const int towerPosFront = 0xAC4;
         const int towerPosBack = 0xAC5;
-        //AC3 原地 AC4上箭头 AC5下箭头
+        //P4红蓝点名
+        const int p4redmark = 0xAD7;
+        const int p4bluemark = 0xAD8;
 
         string[] p2Step2AttackPlayer = new string[2];
         List<string> p2Step3AttackPlayer = new List<string>();
@@ -46,6 +49,9 @@ namespace DragonSongRepriseHelper
         List<string> p3Step1MarkMahjong2Player = new List<string>(2);
         List<string> p3Step1MarkMahjong3Player = new List<string>(3);
         Dictionary<string, int> p3Step1TowerPos = new Dictionary<string, int>();
+        List<string> p4step1MarkPlayer = new List<string>(8);
+        List<string> p4step1ChangePlayer = new List<string>(8);
+        string[] p4step2FirstAttackPlayer = new string[2];
 
         public void DeInitPlugin()
         {
@@ -90,6 +96,9 @@ namespace DragonSongRepriseHelper
             p3Step1MarkMahjong2Player = new List<string>(2);
             p3Step1MarkMahjong3Player = new List<string>(3);
             p3Step1TowerPos = new Dictionary<string, int>();
+            p4step1MarkPlayer = new List<string>(8);
+            p4step1ChangePlayer = new List<string>();
+            p4step2FirstAttackPlayer = new string[2];
             markOffset = -1;
             Log.Print("战斗结束");
         }
@@ -262,6 +271,24 @@ namespace DragonSongRepriseHelper
                     settingContainer.IsRaidMode = false;
                 }
                 Log.Print("当前副本:" + raidName);
+            });
+            //注册P4开场红蓝点名事件
+            logreader.RegisterEvent(26, "^(.+?)StatusAdd(.+?)\\:(AD7|AD8)\\:(\\s|\\S)+$", log =>
+            {
+                if (!settingContainer.IsRaidMode)
+                {
+                    return;
+                }
+                P3Step1Process(log);
+            });
+            //注册P4幻象冲事件
+            logreader.RegisterEvent(21, "^(.+?)ActionEffect(.+?)\\:68C4\\:(\\s|\\S)+$", log =>
+            {
+                if (!settingContainer.IsRaidMode)
+                {
+                    return;
+                }
+                P4Step2Process(log);
             });
             logreader.Init();
         }
@@ -580,7 +607,7 @@ namespace DragonSongRepriseHelper
             
         }
 
-        //三运点麻将
+        //P3点麻将
         public void P3Step1PreProcess(string log)
         {
             string logSubString = log.Substring(log.IndexOf("]"));
@@ -606,7 +633,7 @@ namespace DragonSongRepriseHelper
             }
         }
 
-        //三运点箭头圆圈
+        //P3点箭头圆圈
         public void P3Step1Process(string log)
         {
             //00|2022-09-07T20:54:36.0000000+08:00|112F||陷入了“选定目标：黑暗破碎冲”效果。|6ce23a831a3c4b46  上箭头
@@ -864,6 +891,127 @@ namespace DragonSongRepriseHelper
             }
         }
 
+        //P4开场红蓝点名
+        public void P4Step1Process(string log)
+        {
+            string logSubString = log.Substring(log.IndexOf("]"));
+            string gainCodeStr = logSubString.Split(':')[1];
+            string gainName = logSubString.Split(':')[2];
+            string playerId = logSubString.Split(':')[7];
+
+            Log.Print("P4红蓝点名" + playerId + " 类型:" + gainCodeStr + " 技能名:" + gainName);
+
+            var gainCode = Convert.ToInt32(gainCodeStr, 16);
+            if(gainCode == p4redmark && !this.settingContainer.PlayerSetting.IsDps(playerId))
+            {
+                p4step1ChangePlayer.Add(playerId);
+            }
+            if (gainCode == p4bluemark && this.settingContainer.PlayerSetting.IsDps(playerId))
+            {
+                p4step1ChangePlayer.Add(playerId);
+            }
+
+            p4step1MarkPlayer.Add(playerId);
+            if(p4step1MarkPlayer.Count == 8)
+            {
+                Stack<string> markList = new Stack<string>();
+                foreach(var item in p4step1ChangePlayer)
+                {
+                    if (settingContainer.FunctionSetting.P4Step1Enable)
+                    {
+                        postNamazuHelper.SendCommand(string.Format(markList.Pop(), this.settingContainer.PlayerSetting.PlayerIndex[item]));
+                        Clear();
+                    }
+                    Log.Print("需换位:" + item);
+                }
+            }
+        }
+
+        //P4幻象冲
+        public void P4Step2Process(string log)
+        {
+            if(p4step2FirstAttackPlayer[0] == null || p4step2FirstAttackPlayer[1] == null)
+            {
+                string logSubString = log.Substring(log.IndexOf("]"));
+                string playerId = logSubString.Split(':')[6];
+
+                if(p4step2FirstAttackPlayer[0] == null)
+                {
+                    p4step2FirstAttackPlayer[0] = playerId;
+                    return;
+                }
+
+                if (p4step2FirstAttackPlayer[1] == null)
+                {
+                    p4step2FirstAttackPlayer[1] = playerId;
+                }
+            }
+
+            foreach (var item in p4step2FirstAttackPlayer)
+            {
+                Log.Print("P4幻象冲第一次:" + item);
+            }
+
+            string[] tnRank = new string[] { this.settingContainer.PlayerSetting.MT,
+                this.settingContainer.PlayerSetting.ST,
+                this.settingContainer.PlayerSetting.H1,
+                this.settingContainer.PlayerSetting.H2 };
+
+            int index1 = -1;
+            int index2 = -1;
+
+            for(int i = 0; i <= 3; i++)
+            {
+                if(tnRank[i] == p4step2FirstAttackPlayer[0])
+                {
+                    index1 = i;
+                }
+                if (tnRank[i] == p4step2FirstAttackPlayer[1])
+                {
+                    index2 = i;
+                }
+            }
+
+            if (index1 == -1 || index2 == -1)
+            {
+                if (this.settingContainer.FunctionSetting.P4Step2Enable)
+                {
+                    postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
+                    postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
+                    Clear(15000);
+                }
+                Log.Print("非正常处理方式，随机标记");
+            }
+
+            if (index1 < index2)
+            {
+                if (this.settingContainer.FunctionSetting.P4Step2Enable)
+                {
+                    
+                    Log.Print("标1:" + p4step2FirstAttackPlayer[0]);
+                    Log.Print("标2:" + p4step2FirstAttackPlayer[1]);
+                    postNamazuHelper.SendCommand(string.Format("/mk attack1 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
+                    postNamazuHelper.SendCommand(string.Format("/mk attack2 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
+                    Clear(15000);
+                    return;
+                }
+                
+            }
+
+            if (index1 > index2)
+            {
+                if (this.settingContainer.FunctionSetting.P2Step2Enable)
+                {
+                    Log.Print("标1:" + p4step2FirstAttackPlayer[1]);
+                    Log.Print("标2:" + p4step2FirstAttackPlayer[0]);
+                    postNamazuHelper.SendCommand(string.Format("/mk attack2 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
+                    postNamazuHelper.SendCommand(string.Format("/mk attack1 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
+                    Clear(15000);
+                    return;
+                }
+            }
+        }
+
         public void Clear(int wait = 5000)
         {
             if (!clear)
@@ -902,6 +1050,21 @@ namespace DragonSongRepriseHelper
                     Log.Print("Group:" + i + "player:" + p2Step3AttackGroup[i][y]);
                 }
             }
+        }
+
+        public Stack<string> BuildMarkStack()
+        {
+            Stack<string> res = new Stack<string>();
+            res.Push("/mk bind2 <{0}>");
+            res.Push("/mk bind1 <{0}>");
+            res.Push("/mk stop2 <{0}>");
+            res.Push("/mk stop1 <{0}>");
+            res.Push("/mk attack4 <{0}>");
+            res.Push("/mk attack3 <{0}>");
+            res.Push("/mk attack2 <{0}>");
+            res.Push("/mk attack1 <{0}>");
+
+            return res;
         }
     }
 }

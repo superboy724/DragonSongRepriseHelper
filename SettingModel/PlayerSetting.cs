@@ -259,6 +259,15 @@ namespace DragonSongRepriseHelper.SettingModel
             this.D4 = null;
             this.PlayerIndex.Clear();
         }
+
+        public bool IsDps(string playerId)
+        {
+            if(playerId == D1 || playerId == D2 || playerId == D3 || playerId == D4)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
 }
