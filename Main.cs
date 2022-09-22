@@ -279,7 +279,7 @@ namespace DragonSongRepriseHelper
                 {
                     return;
                 }
-                P3Step1Process(log);
+                P4Step1Process(log);
             });
             //注册P4幻象冲事件
             logreader.RegisterEvent(21, "^(.+?)ActionEffect(.+?)\\:68C4\\:(\\s|\\S)+$", log =>
