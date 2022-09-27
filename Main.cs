@@ -914,22 +914,30 @@ namespace DragonSongRepriseHelper
             p4step1MarkPlayer.Add(playerId);
             if(p4step1MarkPlayer.Count == 8)
             {
-                Stack<string> markList = new Stack<string>();
-                foreach(var item in p4step1ChangePlayer)
+                Stack<string> markList = BuildMarkStack();
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in p4step1ChangePlayer)
                 {
                     if (settingContainer.FunctionSetting.P4Step1Enable)
                     {
                         postNamazuHelper.SendCommand(string.Format(markList.Pop(), this.settingContainer.PlayerSetting.PlayerIndex[item]));
+                        sb.Append(item + " ");
                         Clear();
                     }
                     Log.Print("需换位:" + item);
                 }
+
+                postNamazuHelper.SendCommand(string.Format("/p 红蓝换位:" + sb.ToString()));
             }
         }
 
         //P4幻象冲
         public void P4Step2Process(string log)
         {
+            if(p4step2FirstAttackPlayer[0] != null && p4step2FirstAttackPlayer[1] != null)
+            {
+                return;
+            }
             if(p4step2FirstAttackPlayer[0] == null || p4step2FirstAttackPlayer[1] == null)
             {
                 string logSubString = log.Substring(log.IndexOf("]"));
@@ -978,6 +986,7 @@ namespace DragonSongRepriseHelper
                 {
                     postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
                     postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
+                    postNamazuHelper.SendCommand("/p 第一次点名:" + p4step2FirstAttackPlayer[0] + " " + p4step2FirstAttackPlayer[1] + "");
                     Clear(15000);
                 }
                 Log.Print("非正常处理方式，随机标记");
@@ -992,6 +1001,7 @@ namespace DragonSongRepriseHelper
                     Log.Print("标2:" + p4step2FirstAttackPlayer[1]);
                     postNamazuHelper.SendCommand(string.Format("/mk attack1 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
                     postNamazuHelper.SendCommand(string.Format("/mk attack2 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
+                    postNamazuHelper.SendCommand("/p 第一次点名:" + p4step2FirstAttackPlayer[0] + "(高顺位) " + p4step2FirstAttackPlayer[1] + "(低顺位)");
                     Clear(15000);
                     return;
                 }
@@ -1006,6 +1016,7 @@ namespace DragonSongRepriseHelper
                     Log.Print("标2:" + p4step2FirstAttackPlayer[0]);
                     postNamazuHelper.SendCommand(string.Format("/mk attack2 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
                     postNamazuHelper.SendCommand(string.Format("/mk attack1 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
+                    postNamazuHelper.SendCommand("/p 第一次点名:" + p4step2FirstAttackPlayer[1] + "(高顺位) " + p4step2FirstAttackPlayer[0] + "(低顺位)");
                     Clear(15000);
                     return;
                 }
