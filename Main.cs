@@ -927,7 +927,7 @@ namespace DragonSongRepriseHelper
                     Log.Print("需换位:" + item);
                 }
 
-                postNamazuHelper.SendCommand(string.Format("/p 红蓝换位:" + sb.ToString()));
+                postNamazuHelper.SendCommand(string.Format("/p 【红蓝换位】:" + sb.ToString()));
             }
         }
 
@@ -986,7 +986,7 @@ namespace DragonSongRepriseHelper
                 {
                     postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
                     postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
-                    postNamazuHelper.SendCommand("/p 第一次点名:" + p4step2FirstAttackPlayer[0] + " " + p4step2FirstAttackPlayer[1] + "");
+                    postNamazuHelper.SendCommand("/p 【幻象冲第一次点名】:" + p4step2FirstAttackPlayer[0] + " " + p4step2FirstAttackPlayer[1] + "");
                     Clear(15000);
                 }
                 Log.Print("非正常处理方式，随机标记");
@@ -1001,7 +1001,7 @@ namespace DragonSongRepriseHelper
                     Log.Print("标2:" + p4step2FirstAttackPlayer[1]);
                     postNamazuHelper.SendCommand(string.Format("/mk attack1 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
                     postNamazuHelper.SendCommand(string.Format("/mk attack2 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
-                    postNamazuHelper.SendCommand("/p 第一次点名:" + p4step2FirstAttackPlayer[0] + "(高顺位) " + p4step2FirstAttackPlayer[1] + "(低顺位)");
+                    postNamazuHelper.SendCommand("/p 【幻象冲第一次点名】 :" + p4step2FirstAttackPlayer[0] + "(高顺位) " + p4step2FirstAttackPlayer[1] + "(低顺位)");
                     Clear(15000);
                     return;
                 }
@@ -1016,7 +1016,7 @@ namespace DragonSongRepriseHelper
                     Log.Print("标2:" + p4step2FirstAttackPlayer[0]);
                     postNamazuHelper.SendCommand(string.Format("/mk attack2 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
                     postNamazuHelper.SendCommand(string.Format("/mk attack1 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
-                    postNamazuHelper.SendCommand("/p 第一次点名:" + p4step2FirstAttackPlayer[1] + "(高顺位) " + p4step2FirstAttackPlayer[0] + "(低顺位)");
+                    postNamazuHelper.SendCommand("/p 【幻象冲第一次点名】:" + p4step2FirstAttackPlayer[1] + "(高顺位) " + p4step2FirstAttackPlayer[0] + "(低顺位)");
                     Clear(15000);
                     return;
                 }
