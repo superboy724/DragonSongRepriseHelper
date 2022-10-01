@@ -24,13 +24,17 @@ namespace DragonSongRepriseHelper.SettingModel
 
         public bool P3Step1Enable { get; set; }
 
+        public bool P3Step2Enable { get; set; }
+
         public bool P4Step1Enable { get; set; }
 
         public bool P4Step2Enable { get; set; }
 
+        public bool P3Step2EndEnable { get; set; }
+
         public string[] GetSettingText()
         {
-            string[] settingTexts = new string[10];
+            string[] settingTexts = new string[12];
             settingTexts[0] = "postNamazuUrl=" + PostNamazuSetting;
             settingTexts[1] = "p2Step1Enable=" + (P2Step1Enable ? "true" : "false");
             settingTexts[2] = "p2Step2Enable=" + (P2Step2Enable ? "true" : "false");
@@ -41,6 +45,8 @@ namespace DragonSongRepriseHelper.SettingModel
             settingTexts[7] = "p3Step1Enable=" + (P3Step1Enable ? "true" : "false");
             settingTexts[8] = "p4Step1Enable=" + (P4Step1Enable ? "true" : "false");
             settingTexts[9] = "p4Step2Enable=" + (P4Step2Enable ? "true" : "false");
+            settingTexts[10] = "p3Step2Enable=" + (P3Step2Enable ? "true" : "false");
+            settingTexts[11] = "p3Step2EndEnable=" + (P3Step2EndEnable ? "true" : "false");
 
             return settingTexts;
         }
@@ -86,6 +92,14 @@ namespace DragonSongRepriseHelper.SettingModel
             if (configTexts.ContainsKey("p4Step2Enable"))
             {
                 this.P4Step2Enable = configTexts["p4Step2Enable"] == "true";
+            }
+            if (configTexts.ContainsKey("p3Step2Enable"))
+            {
+                this.P3Step2Enable = configTexts["p3Step2Enable"] == "true";
+            }
+            if (configTexts.ContainsKey("p3Step2EndEnable"))
+            {
+                this.P3Step2EndEnable = configTexts["p3Step2EndEnable"] == "true";
             }
         }
     }

@@ -17,11 +17,13 @@ namespace DragonSongRepriseHelper
     {
         SettingContainer settingContainer;
         Action testFunction;
+        Action testFunction2;
         bool isDestory = false;
-        public SettingForm(SettingContainer settingContainer,Action testFunction)
+        public SettingForm(SettingContainer settingContainer,Action testFunction,Action testFunction2)
         {
             this.settingContainer = settingContainer;
             this.testFunction = testFunction;
+            this.testFunction2 = testFunction2;
             InitializeComponent();
         }
 
@@ -60,7 +62,11 @@ namespace DragonSongRepriseHelper
             cbP2Step4Enable.Checked = settingContainer.FunctionSetting.P2Step4Enable;
             cbP2Step2MarkDisabled.Checked = settingContainer.FunctionSetting.P2Step2MarkDisabled;
             cbP2Step4ChangeTowerEnable.Checked = settingContainer.FunctionSetting.P2Step4ChangeTowerEnable;
+
             cbP3Step1Enable.Checked = settingContainer.FunctionSetting.P3Step1Enable;
+            cbP3Step2Enable.Checked = settingContainer.FunctionSetting.P3Step2Enable;
+            cbP3Step2EndEnable.Checked = settingContainer.FunctionSetting.P3Step2EndEnable;
+
             cbP4Step1Enable.Checked = settingContainer.FunctionSetting.P4Step1Enable;
             cbP4Step2Enable.Checked = settingContainer.FunctionSetting.P4Step2Enable;
 
@@ -239,6 +245,21 @@ namespace DragonSongRepriseHelper
         private void cbP4Step2Enable_CheckedChanged(object sender, EventArgs e)
         {
             this.settingContainer.FunctionSetting.P4Step2Enable = cbP4Step2Enable.Checked;
+        }
+
+        private void btnPlayDbgLog_Click(object sender, EventArgs e)
+        {
+            testFunction2();
+        }
+
+        private void cbP3Step2Enable_CheckedChanged(object sender, EventArgs e)
+        {
+            this.settingContainer.FunctionSetting.P3Step2Enable = cbP3Step2Enable.Checked;
+        }
+
+        private void cbP3Step2EndEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            this.settingContainer.FunctionSetting.P3Step2EndEnable = cbP3Step2Enable.Checked;
         }
     }
 }

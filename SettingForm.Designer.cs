@@ -65,8 +65,13 @@
             this.label13 = new System.Windows.Forms.Label();
             this.cbP4Step1Enable = new System.Windows.Forms.CheckBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnPlayDbgLog = new System.Windows.Forms.Button();
             this.btnLogClear = new System.Windows.Forms.Button();
             this.tbLog = new System.Windows.Forms.TextBox();
+            this.cbP3Step2Enable = new System.Windows.Forms.CheckBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cbP3Step2EndEnable = new System.Windows.Forms.CheckBox();
+            this.label15 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -371,6 +376,10 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.label15);
+            this.tabPage4.Controls.Add(this.cbP3Step2EndEnable);
+            this.tabPage4.Controls.Add(this.label7);
+            this.tabPage4.Controls.Add(this.cbP3Step2Enable);
             this.tabPage4.Controls.Add(this.lLtoNga);
             this.tabPage4.Controls.Add(this.label11);
             this.tabPage4.Controls.Add(this.cbP3Step1Enable);
@@ -471,6 +480,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.btnPlayDbgLog);
             this.tabPage3.Controls.Add(this.btnLogClear);
             this.tabPage3.Controls.Add(this.tbLog);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -479,6 +489,16 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Log";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btnPlayDbgLog
+            // 
+            this.btnPlayDbgLog.Location = new System.Drawing.Point(3, 265);
+            this.btnPlayDbgLog.Name = "btnPlayDbgLog";
+            this.btnPlayDbgLog.Size = new System.Drawing.Size(251, 31);
+            this.btnPlayDbgLog.TabIndex = 6;
+            this.btnPlayDbgLog.Text = "播放调试用日志";
+            this.btnPlayDbgLog.UseVisualStyleBackColor = true;
+            this.btnPlayDbgLog.Click += new System.EventHandler(this.btnPlayDbgLog_Click);
             // 
             // btnLogClear
             // 
@@ -498,6 +518,48 @@
             this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.tbLog.Size = new System.Drawing.Size(730, 219);
             this.tbLog.TabIndex = 4;
+            // 
+            // cbP3Step2Enable
+            // 
+            this.cbP3Step2Enable.AutoSize = true;
+            this.cbP3Step2Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbP3Step2Enable.Location = new System.Drawing.Point(12, 70);
+            this.cbP3Step2Enable.Name = "cbP3Step2Enable";
+            this.cbP3Step2Enable.Size = new System.Drawing.Size(115, 16);
+            this.cbP3Step2Enable.TabIndex = 8;
+            this.cbP3Step2Enable.Text = "八人塔换位提醒";
+            this.cbP3Step2Enable.UseVisualStyleBackColor = true;
+            this.cbP3Step2Enable.CheckedChanged += new System.EventHandler(this.cbP3Step2Enable_CheckedChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(10, 89);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(293, 12);
+            this.label7.TabIndex = 9;
+            this.label7.Text = "功能说明：可头顶标记换塔位置（1=左 2=对侧 3=右）";
+            // 
+            // cbP3Step2EndEnable
+            // 
+            this.cbP3Step2EndEnable.AutoSize = true;
+            this.cbP3Step2EndEnable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbP3Step2EndEnable.Location = new System.Drawing.Point(12, 122);
+            this.cbP3Step2EndEnable.Name = "cbP3Step2EndEnable";
+            this.cbP3Step2EndEnable.Size = new System.Drawing.Size(116, 16);
+            this.cbP3Step2EndEnable.TabIndex = 10;
+            this.cbP3Step2EndEnable.Text = "ST分身拉线提醒";
+            this.cbP3Step2EndEnable.UseVisualStyleBackColor = true;
+            this.cbP3Step2EndEnable.CheckedChanged += new System.EventHandler(this.cbP3Step2EndEnable_CheckedChanged);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(10, 141);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(395, 24);
+            this.label15.TabIndex = 11;
+            this.label15.Text = "功能说明：八人塔之后双T拉线，通过头顶标记告知ST哪个位置的分身出线\r\n（1=左上 2=右上 3=左下 4=右下）";
             // 
             // SettingForm
             // 
@@ -563,5 +625,10 @@
         private System.Windows.Forms.CheckBox cbP4Step2Enable;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.CheckBox cbP4Step1Enable;
+        private System.Windows.Forms.Button btnPlayDbgLog;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.CheckBox cbP3Step2Enable;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.CheckBox cbP3Step2EndEnable;
     }
 }

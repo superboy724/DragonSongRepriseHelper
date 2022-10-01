@@ -19,6 +19,7 @@ namespace DragonSongRepriseHelper
         PostNamazuHelper postNamazuHelper;
         SettingForm settingForm = null;
         bool clear = false;
+        bool isDebug = false;
         int markOffset = -1;
         const int skywardTripleMark = 0x14A;
         const int sword1Mark = 0x32;
@@ -34,6 +35,12 @@ namespace DragonSongRepriseHelper
         const int towerPosInPlace = 0xAC3;
         const int towerPosFront = 0xAC4;
         const int towerPosBack = 0xAC5;
+        //P3八人塔
+        const int eightTowerOne = 0x6717;
+        const int eightTowerTwo = 0x6718;
+        const int eightTowerThree = 0x6719;
+        const int eightTowerFour = 0x671A;
+
         //P4红蓝点名
         const int p4redmark = 0xAD7;
         const int p4bluemark = 0xAD8;
@@ -49,6 +56,15 @@ namespace DragonSongRepriseHelper
         List<string> p3Step1MarkMahjong2Player = new List<string>(2);
         List<string> p3Step1MarkMahjong3Player = new List<string>(3);
         Dictionary<string, int> p3Step1TowerPos = new Dictionary<string, int>();
+        int[] p3Step2TowerPos = new int[4];
+        int p3Step2TowerCount = 0;
+        //P3八人塔结束后 初始站位
+        //D3 D4 H1 H2 MT ST D1 D2
+        //开启P3八人塔机制后，该数组会修改为按照机制正常处理后所在位置
+        int[] p3Step2EndPos = new int[8] { 1, 2, 3, 4, 1, 2, 3, 4 };
+        //尼德霍格非本体ID
+        Dictionary<string,int> nidhoggNotBossId = new Dictionary<string,int>();
+        bool isP3Step2Endtoolpid = false;
         List<string> p4step1MarkPlayer = new List<string>(8);
         List<string> p4step1ChangePlayer = new List<string>(8);
         string[] p4step2FirstAttackPlayer = new string[2];
@@ -84,30 +100,23 @@ namespace DragonSongRepriseHelper
         private void OFormActMain_OnCombatEnd(bool isImport, CombatToggleEventArgs encounterInfo)
         {
             //初始化所有变量
-            clear = false;
-            p2Step2AttackPlayer = new string[2];
-            p2Step1AttackPlayer = new List<string>();
-            p2Step3AttackPlayer = new List<string>();
-            p2Step4OutTower = new P2Step4OutTower();
-            p2Step4TowerCount = 0;
-            p2Step3AttackGroupType = "";
-            p2Step3AttackGroup = new string[2][];
-            p3Step1MarkMahjong1Player = new List<string>(3);
-            p3Step1MarkMahjong2Player = new List<string>(2);
-            p3Step1MarkMahjong3Player = new List<string>(3);
-            p3Step1TowerPos = new Dictionary<string, int>();
-            p4step1MarkPlayer = new List<string>(8);
-            p4step1ChangePlayer = new List<string>();
-            p4step2FirstAttackPlayer = new string[2];
-            markOffset = -1;
-            Log.Print("战斗结束");
+            ResetCombat();
         }
 
         public void RegisterSettingForm(TabPage pluginScreenSpace, Label pluginStatusText)
         {
             settingContainer.LoadSetting(Path.Combine(ActGlobals.oFormActMain.AppDataFolder.FullName, "DragonSongRepriseHelper.v2.config"));
 
-            settingForm = new SettingForm(settingContainer,Test);
+            settingForm = new SettingForm(settingContainer,Test,()=> {
+                isDebug = true;
+                ResetCombat();
+                OpenFileDialog fileDialog = new OpenFileDialog();
+                if(fileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    logreader.PlayLog(fileDialog.FileName);
+                }
+                isDebug = false;
+            });
             pluginScreenSpace.Controls.Add(settingForm);
             settingForm.Dock = DockStyle.Fill;
 
@@ -289,6 +298,21 @@ namespace DragonSongRepriseHelper
                     return;
                 }
                 P4Step2Process(log);
+            });
+            logreader.RegisterEvent(20, "^(.+?)StartsCasting(.+?)\\:(6717|6718|6719|6720)\\:黑暗龙炎冲(\\s|\\S)+$",log=> {
+                if (!settingContainer.IsRaidMode)
+                {
+                    return;
+                }
+                P3Step2Process(log);
+            });
+            logreader.RegisterEvent(35, "^(.+?)Tether(.+?)\\:0054\\:(\\s|\\S)+$", log =>
+            {
+                if (!settingContainer.IsRaidMode)
+                {
+                    return;
+                }
+                P3Step2EndProcess(log);
             });
             logreader.Init();
         }
@@ -786,7 +810,7 @@ namespace DragonSongRepriseHelper
                         postNamazuHelper.SendCommand("/mk " + item.Item2 + item.Item3 + " <" + item.Item1 + ">");
                     }
 
-                    postNamazuHelper.SendCommand("/y 【放塔提醒】");
+                    postNamazuHelper.SendCommand("/p 【放塔提醒】");
                     //一组消息提醒
                     if (group1NotAllInPlace)
                     {
@@ -891,6 +915,239 @@ namespace DragonSongRepriseHelper
             }
         }
 
+        //P3八人塔换位
+        public void P3Step2Process(string log)
+        {
+            string logSubString = log.Substring(log.IndexOf("]"));
+            string towerCode = logSubString.Split(':')[3];
+            string bossID = logSubString.Split(':')[1];
+            double posX = Convert.ToDouble(logSubString.Split(':')[8]);
+            double posY = Convert.ToDouble(logSubString.Split(':')[9]);
+            //[22:06:22.682] StartsCasting 14:400195AB:尼德霍格:6718:黑暗龙炎冲:400195AB:尼德霍格:4.700:108.00:108.00:0.00:-2.18
+            //D3塔
+            if (posX == 92 && posY == 92)
+            {
+                p3Step2TowerPos[0] = Convert.ToInt32(towerCode, 16);
+                nidhoggNotBossId.Add(bossID,1);
+            }
+            //D4塔
+            if (posX == 108 && posY == 92)
+            {
+                p3Step2TowerPos[1] = Convert.ToInt32(towerCode, 16);
+                nidhoggNotBossId.Add(bossID,2);
+            }
+            //H1塔
+            if (posX == 92 && posY == 108)
+            {
+                p3Step2TowerPos[2] = Convert.ToInt32(towerCode, 16);
+                nidhoggNotBossId.Add(bossID,3);
+            }
+            //H2塔
+            if (posX == 108 && posY == 108)
+            {
+                p3Step2TowerPos[3] = Convert.ToInt32(towerCode, 16);
+                nidhoggNotBossId.Add(bossID,4);
+            }
+            
+
+            p3Step2TowerCount++;
+            if(p3Step2TowerCount == 4)
+            {
+                string str = "";
+                for (int i = 0;i<= p3Step2TowerPos.Length - 1; i++)
+                {
+                    if(i == 0)
+                    {
+                        str += "D3塔类型：";
+                    }
+                    if (i == 1)
+                    {
+                        str += " D4塔类型：";
+                    }
+                    if (i == 2)
+                    {
+                        str += " H1塔类型：";
+                    }
+                    if (i == 3)
+                    {
+                        str += " H2塔类型：";
+                    }
+
+                    str += (p3Step2TowerPos[i] - eightTowerOne + 1).ToString();
+                }
+                Log.Print(str);
+                //换位类型 1=左 2=对侧 3=右
+                //MT ST D1 D2
+                int[] changeType = new int[4] { 0, 0, 0, 0 };
+                if(p3Step2TowerPos[0] == eightTowerOne)
+                {
+                    //左塔（2号D4）
+                    if(p3Step2TowerPos[1] != eightTowerOne && p3Step2TowerPos[1] != eightTowerTwo)
+                    {
+                        changeType[0] = 1;
+                        p3Step2EndPos[4] = 2;
+                    }
+                    //右塔（3号H1）
+                    else if (p3Step2TowerPos[2] != eightTowerOne && p3Step2TowerPos[2] != eightTowerTwo)
+                    {
+                        changeType[0] = 3;
+                        p3Step2EndPos[4] = 3;
+                    }
+                    //对侧塔（4号H2）
+                    else if (p3Step2TowerPos[3] != eightTowerOne && p3Step2TowerPos[3] != eightTowerTwo)
+                    {
+                        changeType[0] = 2;
+                        p3Step2EndPos[4] = 4;
+                    }
+                }
+                if (p3Step2TowerPos[1] == eightTowerOne)
+                {
+                    //左塔（4号H2）
+                    if (p3Step2TowerPos[3] != eightTowerOne && p3Step2TowerPos[3] != eightTowerTwo)
+                    {
+                        changeType[1] = 1;
+                        p3Step2EndPos[5] = 4;
+                    }
+                    //右边（1号D3）
+                    else if (p3Step2TowerPos[0] != eightTowerOne && p3Step2TowerPos[0] != eightTowerTwo)
+                    {
+                        changeType[1] = 3;
+                        p3Step2EndPos[5] = 1;
+                    }
+                    //对侧塔（3号H1）
+                    else if (p3Step2TowerPos[2] != eightTowerOne && p3Step2TowerPos[2] != eightTowerTwo)
+                    {
+                        changeType[1] = 2;
+                        p3Step2EndPos[5] = 3;
+                    }
+                }
+                if (p3Step2TowerPos[2] == eightTowerOne)
+                {
+                    //左塔（1号D3）
+                    if (p3Step2TowerPos[0] != eightTowerOne && p3Step2TowerPos[0] != eightTowerTwo)
+                    {
+                        changeType[2] = 1;
+                        p3Step2EndPos[6] = 1;
+                    }
+                    //右边（4号H2）
+                    else if (p3Step2TowerPos[3] != eightTowerOne && p3Step2TowerPos[3] != eightTowerTwo)
+                    {
+                        changeType[2] = 3;
+                        p3Step2EndPos[6] = 4;
+                    }
+                    //对侧塔（2号D4）
+                    else if (p3Step2TowerPos[1] != eightTowerOne && p3Step2TowerPos[1] != eightTowerTwo)
+                    {
+                        changeType[2] = 2;
+                        p3Step2EndPos[6] = 2;
+                    }
+                }
+                if (p3Step2TowerPos[3] == eightTowerOne)
+                {
+                    //左塔（3号H1）
+                    if (p3Step2TowerPos[2] != eightTowerOne && p3Step2TowerPos[2] != eightTowerTwo)
+                    {
+                        changeType[3] = 1;
+                        p3Step2EndPos[7] = 3;
+                    }
+                    //右边（2号D4）
+                    else if (p3Step2TowerPos[1] != eightTowerOne && p3Step2TowerPos[1] != eightTowerTwo)
+                    {
+                        changeType[3] = 3;
+                        p3Step2EndPos[7] = 2;
+                    }
+                    //对侧塔（1号D3）
+                    else if (p3Step2TowerPos[0] != eightTowerOne && p3Step2TowerPos[0] != eightTowerTwo)
+                    {
+                        changeType[3] = 2;
+                        p3Step2EndPos[7] = 1;
+                    }
+                }
+
+                Stack<string> commands = new Stack<string>();
+                commands.Push("/mk bind{0} <{1}>");
+                commands.Push("/mk attack{0} <{1}>");
+                string message = "/p 【八人塔换位】";
+                if (!this.settingContainer.FunctionSetting.P3Step2Enable)
+                {
+                    return;
+                }
+                for (int i = 0;i<= changeType.Length - 1; i++)
+                {
+                    if (changeType[i] != 0)
+                    {
+                        string command = commands.Pop();
+                        string index = null;
+                        string type = null;
+                        string playerId = null;
+                        if(i == 0)
+                        {
+                            playerId = settingContainer.PlayerSetting.MT;
+                        }
+                        if (i == 1)
+                        {
+                            playerId = settingContainer.PlayerSetting.ST;
+                        }
+                        if (i == 2)
+                        {
+                            playerId = settingContainer.PlayerSetting.D1;
+                        }
+                        if (i == 3)
+                        {
+                            playerId = settingContainer.PlayerSetting.D2;
+                        }
+                        Log.Print(playerId + "换位情况：" + changeType[i]);
+                        index = settingContainer.PlayerSetting.PlayerIndex[playerId].ToString();
+                        type = changeType[i].ToString();
+                        command = string.Format(command, type, index);
+                        postNamazuHelper.SendCommand(command);
+                        message += playerId + "(" + (type == "1" ? "左" : (type == "2" ? "对侧" : "右")) + ") ";
+                        Clear(3000);
+                    }
+                }
+
+                postNamazuHelper.SendCommand(message);
+            }
+        }
+
+        //P3八人塔放线分身位置
+        public void P3Step2EndProcess(string log)
+        {
+            string logSubString = log.Substring(log.IndexOf("]"));
+            string bossID = logSubString.Split(':')[1];
+
+            if (nidhoggNotBossId.ContainsKey(bossID))
+            {
+                int pos = nidhoggNotBossId[bossID];
+                Log.Print("尼德霍格分身出线ID：" + bossID + ",位置:" + pos);
+                isP3Step2Endtoolpid = true;
+                if (!this.settingContainer.FunctionSetting.P3Step2EndEnable || isP3Step2Endtoolpid)
+                {
+                    return;
+                }
+                if(pos == 1)
+                {
+                    postNamazuHelper.SendCommand("/p 【分身线出现位置】左上（4点）（D3组）");
+                }
+                if (pos == 2)
+                {
+                    postNamazuHelper.SendCommand("/p 【分身线出现位置】右上（1点）（D4组）");
+                }
+                if (pos == 3)
+                {
+                    postNamazuHelper.SendCommand("/p 【分身线出现位置】左下（3点）（H1组）");
+                }
+                if (pos == 4)
+                {
+                    postNamazuHelper.SendCommand("/p 【分身线出现位置】右下（2点）（H2组）");
+                }
+                int index = this.settingContainer.PlayerSetting.PlayerIndex[this.settingContainer.PlayerSetting.ST];
+                postNamazuHelper.SendCommand("/mk attack" + pos + " <" + index + ">");
+                
+                Clear();
+            }
+        }
+
         //P4开场红蓝点名
         public void P4Step1Process(string log)
         {
@@ -927,7 +1184,7 @@ namespace DragonSongRepriseHelper
                     Log.Print("需换位:" + item);
                 }
 
-                postNamazuHelper.SendCommand(string.Format("/p 【红蓝换位】:" + sb.ToString()));
+                postNamazuHelper.SendCommand(string.Format("/p 【红蓝换位】" + sb.ToString()));
             }
         }
 
@@ -986,7 +1243,7 @@ namespace DragonSongRepriseHelper
                 {
                     postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
                     postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
-                    postNamazuHelper.SendCommand("/p 【幻象冲第一次点名】:" + p4step2FirstAttackPlayer[0] + " " + p4step2FirstAttackPlayer[1] + "");
+                    postNamazuHelper.SendCommand("/p 【幻象冲第一次点名】" + p4step2FirstAttackPlayer[0] + " " + p4step2FirstAttackPlayer[1] + "");
                     Clear(15000);
                 }
                 Log.Print("非正常处理方式，随机标记");
@@ -1001,7 +1258,7 @@ namespace DragonSongRepriseHelper
                     Log.Print("标2:" + p4step2FirstAttackPlayer[1]);
                     postNamazuHelper.SendCommand(string.Format("/mk attack1 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
                     postNamazuHelper.SendCommand(string.Format("/mk attack2 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
-                    postNamazuHelper.SendCommand("/p 【幻象冲第一次点名】 :" + p4step2FirstAttackPlayer[0] + "(高顺位) " + p4step2FirstAttackPlayer[1] + "(低顺位)");
+                    postNamazuHelper.SendCommand("/p 【幻象冲第一次点名】" + p4step2FirstAttackPlayer[0] + "(高顺位) " + p4step2FirstAttackPlayer[1] + "(低顺位)");
                     Clear(15000);
                     return;
                 }
@@ -1016,15 +1273,18 @@ namespace DragonSongRepriseHelper
                     Log.Print("标2:" + p4step2FirstAttackPlayer[0]);
                     postNamazuHelper.SendCommand(string.Format("/mk attack2 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[0]]));
                     postNamazuHelper.SendCommand(string.Format("/mk attack1 <{0}>", this.settingContainer.PlayerSetting.PlayerIndex[p4step2FirstAttackPlayer[1]]));
-                    postNamazuHelper.SendCommand("/p 【幻象冲第一次点名】:" + p4step2FirstAttackPlayer[1] + "(高顺位) " + p4step2FirstAttackPlayer[0] + "(低顺位)");
+                    postNamazuHelper.SendCommand("/p 【幻象冲第一次点名】" + p4step2FirstAttackPlayer[1] + "(高顺位) " + p4step2FirstAttackPlayer[0] + "(低顺位)");
                     Clear(15000);
                     return;
                 }
             }
         }
-
         public void Clear(int wait = 5000)
         {
+            if (isDebug)
+            {
+                postNamazuHelper.SendCommand("/e 清理 timer:" + wait);
+            }
             if (!clear)
             {
                 new Thread(() =>
@@ -1076,6 +1336,32 @@ namespace DragonSongRepriseHelper
             res.Push("/mk attack1 <{0}>");
 
             return res;
+        }
+
+        public void ResetCombat()
+        {
+            clear = false;
+            p2Step2AttackPlayer = new string[2];
+            p2Step1AttackPlayer = new List<string>();
+            p2Step3AttackPlayer = new List<string>();
+            p2Step4OutTower = new P2Step4OutTower();
+            p2Step4TowerCount = 0;
+            p2Step3AttackGroupType = "";
+            p2Step3AttackGroup = new string[2][];
+            p3Step1MarkMahjong1Player = new List<string>(3);
+            p3Step1MarkMahjong2Player = new List<string>(2);
+            p3Step1MarkMahjong3Player = new List<string>(3);
+            p3Step1TowerPos = new Dictionary<string, int>();
+            p4step1MarkPlayer = new List<string>(8);
+            p4step1ChangePlayer = new List<string>();
+            p4step2FirstAttackPlayer = new string[2];
+            p3Step2TowerPos = new int[4];
+            p3Step2TowerCount = 0;
+            p3Step2EndPos = new int[8] { 1,2,3,4,1,2,3,4 };
+            nidhoggNotBossId = new Dictionary<string, int>();
+            isP3Step2Endtoolpid = false;
+            markOffset = -1;
+            Log.Print("战斗结束");
         }
     }
 }

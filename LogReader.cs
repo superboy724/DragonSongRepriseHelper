@@ -1,6 +1,7 @@
 ﻿using Advanced_Combat_Tracker;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -87,6 +88,38 @@ namespace DragonSongRepriseHelper
             OFormActMain_OnLogLineRead(false, t6);
             OFormActMain_OnLogLineRead(false, t7);
             OFormActMain_OnLogLineRead(false, t8);
+        }
+
+        public void PlayLog(string path)
+        {
+            var text = File.ReadAllLines(path);
+            foreach(var logline in text)
+            {
+                try
+                {
+                    string logSubString = logline.Substring(logline.IndexOf("]"));
+                    string split = logSubString.Split(':')[0];
+                    LogLineEventArgs logInfo = new LogLineEventArgs(logline, Convert.ToInt32(split.Substring(split.Length - 2, 2),16), DateTime.Now,"",true);
+                    if (logInfo.detectedType == 27)
+                    {
+                        Log.Print(logInfo.logLine);
+                    }
+                    foreach (var item in eventList)
+                    {
+
+                        if (logInfo.detectedType == item.EventCode && !string.IsNullOrEmpty(Regex.Match(logInfo.logLine, item.EventRegexp).Value))
+                        {
+                            Log.Print("命中日志行:" + logInfo.logLine);
+                            item.CallBack(logInfo.logLine);
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Print(ex.ToString());
+                }
+            }
         }
 
         public void Dispose()
