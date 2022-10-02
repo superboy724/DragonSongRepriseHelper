@@ -299,7 +299,7 @@ namespace DragonSongRepriseHelper
                 }
                 P4Step2Process(log);
             });
-            logreader.RegisterEvent(20, "^(.+?)StartsCasting(.+?)\\:(6717|6718|6719|6720)\\:黑暗龙炎冲(\\s|\\S)+$",log=> {
+            logreader.RegisterEvent(20, "^(.+?)StartsCasting(.+?)\\:(6717|6718|6719|671A)\\:黑暗龙炎冲(\\s|\\S)+$",log=> {
                 if (!settingContainer.IsRaidMode)
                 {
                     return;
@@ -1068,6 +1068,7 @@ namespace DragonSongRepriseHelper
                 commands.Push("/mk bind{0} <{1}>");
                 commands.Push("/mk attack{0} <{1}>");
                 string message = "/p 【八人塔换位】";
+                bool isNotNeedChange = false;
                 if (!this.settingContainer.FunctionSetting.P3Step2Enable)
                 {
                     return;
@@ -1080,7 +1081,8 @@ namespace DragonSongRepriseHelper
                         string index = null;
                         string type = null;
                         string playerId = null;
-                        if(i == 0)
+                        isNotNeedChange = true;
+                        if (i == 0)
                         {
                             playerId = settingContainer.PlayerSetting.MT;
                         }
@@ -1105,7 +1107,10 @@ namespace DragonSongRepriseHelper
                         Clear(3000);
                     }
                 }
-
+                if (isNotNeedChange)
+                {
+                    message += "无";
+                }
                 postNamazuHelper.SendCommand(message);
             }
         }
@@ -1119,30 +1124,36 @@ namespace DragonSongRepriseHelper
             if (nidhoggNotBossId.ContainsKey(bossID))
             {
                 int pos = nidhoggNotBossId[bossID];
+                int attackId = 0;
                 Log.Print("尼德霍格分身出线ID：" + bossID + ",位置:" + pos);
-                isP3Step2Endtoolpid = true;
+                
                 if (!this.settingContainer.FunctionSetting.P3Step2EndEnable || isP3Step2Endtoolpid)
                 {
                     return;
                 }
-                if(pos == 1)
+                isP3Step2Endtoolpid = true;
+                if (pos == 1)
                 {
                     postNamazuHelper.SendCommand("/p 【分身线出现位置】左上（4点）（D3组）");
+                    attackId = 4;
                 }
                 if (pos == 2)
                 {
                     postNamazuHelper.SendCommand("/p 【分身线出现位置】右上（1点）（D4组）");
+                    attackId = 1;
                 }
                 if (pos == 3)
                 {
                     postNamazuHelper.SendCommand("/p 【分身线出现位置】左下（3点）（H1组）");
+                    attackId = 3;
                 }
                 if (pos == 4)
                 {
                     postNamazuHelper.SendCommand("/p 【分身线出现位置】右下（2点）（H2组）");
+                    attackId = 2;
                 }
                 int index = this.settingContainer.PlayerSetting.PlayerIndex[this.settingContainer.PlayerSetting.ST];
-                postNamazuHelper.SendCommand("/mk attack" + pos + " <" + index + ">");
+                postNamazuHelper.SendCommand("/mk attack" + attackId + " <" + index + ">");
                 
                 Clear();
             }
