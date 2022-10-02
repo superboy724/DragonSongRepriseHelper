@@ -68,6 +68,7 @@ namespace DragonSongRepriseHelper
         List<string> p4step1MarkPlayer = new List<string>(8);
         List<string> p4step1ChangePlayer = new List<string>(8);
         string[] p4step2FirstAttackPlayer = new string[2];
+        string[] p5step1ThunderAttackPlayer = new string[2];
 
         public void DeInitPlugin()
         {
@@ -313,6 +314,21 @@ namespace DragonSongRepriseHelper
                     return;
                 }
                 P3Step2EndProcess(log);
+            });
+            logreader.RegisterEvent(26, "^(.+?)StatusAdd(.+?)\\:B11\\:(\\s|\\S)+$", log =>
+            {
+                if (!settingContainer.IsRaidMode)
+                {
+                    return;
+                }
+                try
+                {
+                    P5Step1Process(log);
+                }
+                catch (Exception ex)
+                {
+                    Log.Print(ex.ToString());
+                }
             });
             logreader.Init();
         }
@@ -1068,7 +1084,7 @@ namespace DragonSongRepriseHelper
                 commands.Push("/mk bind{0} <{1}>");
                 commands.Push("/mk attack{0} <{1}>");
                 string message = "/p 【八人塔换位】";
-                bool isNotNeedChange = false;
+                bool isNotNeedChange = true;
                 if (!this.settingContainer.FunctionSetting.P3Step2Enable)
                 {
                     return;
@@ -1081,7 +1097,7 @@ namespace DragonSongRepriseHelper
                         string index = null;
                         string type = null;
                         string playerId = null;
-                        isNotNeedChange = true;
+                        isNotNeedChange = false;
                         if (i == 0)
                         {
                             playerId = settingContainer.PlayerSetting.MT;
@@ -1290,6 +1306,53 @@ namespace DragonSongRepriseHelper
                 }
             }
         }
+
+        //P5雷翼点名
+        public void P5Step1Process(string log)
+        {
+            string logSubString = log.Substring(log.IndexOf("]"));
+            string playerId = logSubString.Split(':')[7];
+            if (p5step1ThunderAttackPlayer[0] == null)
+            {
+                p5step1ThunderAttackPlayer[0] = playerId;
+                return;
+            }
+            if (p5step1ThunderAttackPlayer[1] == null)
+            {
+                p5step1ThunderAttackPlayer[1] = playerId;
+            }
+            
+            if(p5step1ThunderAttackPlayer[0] != null && p5step1ThunderAttackPlayer[1] != null)
+            {
+                int partyIndex1 = this.settingContainer.PlayerSetting.PlayerIndex[p5step1ThunderAttackPlayer[0]];
+                int partyIndex2 = this.settingContainer.PlayerSetting.PlayerIndex[p5step1ThunderAttackPlayer[1]];
+                int jobIndex1 = this.settingContainer.PlayerSetting.GetJobIndexByPlayerId(p5step1ThunderAttackPlayer[0]);
+                int jobIndex2 = this.settingContainer.PlayerSetting.GetJobIndexByPlayerId(p5step1ThunderAttackPlayer[1]);
+                if(jobIndex1 >= jobIndex2)
+                {
+                    Log.Print("高顺位：" + p5step1ThunderAttackPlayer[0] + "=" + jobIndex1 + ",低顺位：" + p5step1ThunderAttackPlayer[1] + "=" + jobIndex2);
+                    if (this.settingContainer.FunctionSetting.P5Step1Enable)
+                    {
+                        postNamazuHelper.SendCommand("/mk attack1 <" + partyIndex1 + ">");
+                        postNamazuHelper.SendCommand("/mk attack2 <" + partyIndex2 + ">");
+                        postNamazuHelper.SendCommand("/p 【雷翼点名】" + p5step1ThunderAttackPlayer[0] + "(高顺位)" + " " + p5step1ThunderAttackPlayer[1] + "(低顺位)");
+                        Clear();
+                    }
+                }
+                else if (jobIndex1 < jobIndex2)
+                {
+                    Log.Print("高顺位：" + p5step1ThunderAttackPlayer[1] + "=" + jobIndex2 + ",低顺位：" + p5step1ThunderAttackPlayer[0] + "=" + jobIndex1);
+                    if (this.settingContainer.FunctionSetting.P5Step1Enable)
+                    {
+                        postNamazuHelper.SendCommand("/mk attack1 <" + partyIndex2 + ">");
+                        postNamazuHelper.SendCommand("/mk attack2 <" + partyIndex1 + ">");
+                        postNamazuHelper.SendCommand("/p 【雷翼点名】" + p5step1ThunderAttackPlayer[1] + "(高顺位)" + " " + p5step1ThunderAttackPlayer[0] + "(低顺位)");
+                        Clear();
+                    }
+                }
+            }
+        }
+
         public void Clear(int wait = 5000)
         {
             if (isDebug)
@@ -1371,6 +1434,7 @@ namespace DragonSongRepriseHelper
             p3Step2EndPos = new int[8] { 1,2,3,4,1,2,3,4 };
             nidhoggNotBossId = new Dictionary<string, int>();
             isP3Step2Endtoolpid = false;
+            p5step1ThunderAttackPlayer = new string[2];
             markOffset = -1;
             Log.Print("战斗结束");
         }
