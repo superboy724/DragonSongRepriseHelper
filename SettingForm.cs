@@ -259,7 +259,7 @@ namespace DragonSongRepriseHelper
 
         private void cbP3Step2EndEnable_CheckedChanged(object sender, EventArgs e)
         {
-            this.settingContainer.FunctionSetting.P3Step2EndEnable = cbP3Step2Enable.Checked;
+            this.settingContainer.FunctionSetting.P3Step2EndEnable = cbP3Step2EndEnable.Checked;
         }
     }
 }
