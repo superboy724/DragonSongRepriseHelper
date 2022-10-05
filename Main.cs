@@ -941,25 +941,25 @@ namespace DragonSongRepriseHelper
             double posY = Convert.ToDouble(logSubString.Split(':')[9]);
             //[22:06:22.682] StartsCasting 14:400195AB:尼德霍格:6718:黑暗龙炎冲:400195AB:尼德霍格:4.700:108.00:108.00:0.00:-2.18
             //D3塔
-            if (posX == 92 && posY == 92)
+            if ((posX > 90 && posX < 94) && (posX > 90 && posX < 94))
             {
                 p3Step2TowerPos[0] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,1);
             }
             //D4塔
-            if (posX == 108 && posY == 92)
+            if ((posX > 106 && posX < 110) && (posX > 90 && posX < 94))
             {
                 p3Step2TowerPos[1] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,2);
             }
             //H1塔
-            if (posX == 92 && posY == 108)
+            if ((posX > 90 && posX < 94) && (posX > 106 && posX < 110))
             {
                 p3Step2TowerPos[2] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,3);
             }
             //H2塔
-            if (posX == 108 && posY == 108)
+            if ((posX > 106 && posX < 110) && (posX > 106 && posX < 110))
             {
                 p3Step2TowerPos[3] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,4);
@@ -1336,7 +1336,7 @@ namespace DragonSongRepriseHelper
                         postNamazuHelper.SendCommand("/mk attack1 <" + partyIndex1 + ">");
                         postNamazuHelper.SendCommand("/mk attack2 <" + partyIndex2 + ">");
                         postNamazuHelper.SendCommand("/p 【雷翼点名】" + p5step1ThunderAttackPlayer[0] + "(高顺位)" + " " + p5step1ThunderAttackPlayer[1] + "(低顺位)");
-                        Clear();
+                        Clear(30000);
                     }
                 }
                 else if (jobIndex1 < jobIndex2)
@@ -1347,7 +1347,7 @@ namespace DragonSongRepriseHelper
                         postNamazuHelper.SendCommand("/mk attack1 <" + partyIndex2 + ">");
                         postNamazuHelper.SendCommand("/mk attack2 <" + partyIndex1 + ">");
                         postNamazuHelper.SendCommand("/p 【雷翼点名】" + p5step1ThunderAttackPlayer[1] + "(高顺位)" + " " + p5step1ThunderAttackPlayer[0] + "(低顺位)");
-                        Clear();
+                        Clear(30000);
                     }
                 }
             }
