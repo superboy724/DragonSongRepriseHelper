@@ -178,6 +178,48 @@ namespace DragonSongRepriseHelper.SettingModel
             return null;
         }
 
+        /// <summary>
+        /// 获取职业优先级
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <returns></returns>
+        public int GetJobIndexByPlayerId(string playerId)
+        {
+            if (MT == playerId)
+            {
+                return 8;
+            }
+            else if (ST == playerId)
+            {
+                return 7;
+            }
+            else if (H1 == playerId)
+            {
+                return 6;
+            }
+            else if (H2 == playerId)
+            {
+                return 5;
+            }
+            else if (D1 == playerId)
+            {
+                return 4;
+            }
+            else if (D2 == playerId)
+            {
+                return 3;
+            }
+            else if (D3 == playerId)
+            {
+                return 2;
+            }
+            else if (D4 == playerId)
+            {
+                return 1;
+            }
+            return 0;
+        }
+
         public bool SetPlayerFromPlayerText(string text)
         {
             PlayerIndex.Clear();
