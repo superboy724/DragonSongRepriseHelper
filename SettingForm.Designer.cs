@@ -68,20 +68,20 @@
             this.cbP4Step2Enable = new System.Windows.Forms.CheckBox();
             this.label13 = new System.Windows.Forms.Label();
             this.cbP4Step1Enable = new System.Windows.Forms.CheckBox();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
+            this.cbP5Step1Enable = new System.Windows.Forms.CheckBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.btnPlayDbgLog = new System.Windows.Forms.Button();
             this.btnLogClear = new System.Windows.Forms.Button();
             this.tbLog = new System.Windows.Forms.TextBox();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.label16 = new System.Windows.Forms.Label();
-            this.cbP5Step1Enable = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
-            this.tabPage3.SuspendLayout();
             this.tabPage6.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -277,9 +277,9 @@
             this.cbP2Step4ChangeTowerEnable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cbP2Step4ChangeTowerEnable.Location = new System.Drawing.Point(159, 118);
             this.cbP2Step4ChangeTowerEnable.Name = "cbP2Step4ChangeTowerEnable";
-            this.cbP2Step4ChangeTowerEnable.Size = new System.Drawing.Size(180, 16);
+            this.cbP2Step4ChangeTowerEnable.Size = new System.Drawing.Size(120, 16);
             this.cbP2Step4ChangeTowerEnable.TabIndex = 9;
-            this.cbP2Step4ChangeTowerEnable.Text = "开启120换180提醒（未测试）";
+            this.cbP2Step4ChangeTowerEnable.Text = "开启120换180提醒";
             this.cbP2Step4ChangeTowerEnable.UseVisualStyleBackColor = true;
             this.cbP2Step4ChangeTowerEnable.CheckedChanged += new System.EventHandler(this.cbP2Step4ChangeTowerEnable_CheckedChanged);
             // 
@@ -402,7 +402,7 @@
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(395, 24);
             this.label15.TabIndex = 11;
-            this.label15.Text = "功能说明：八人塔之后双T拉线，通过头顶标记告知ST哪个位置的分身出线\r\n（1=左上 2=右上 3=左下 4=右下）";
+            this.label15.Text = "功能说明：八人塔之后双T拉线，通过头顶标记告知ST哪个位置的分身出线\r\n（头上标点和场地标点对应）";
             // 
             // cbP3Step2EndEnable
             // 
@@ -431,9 +431,9 @@
             this.cbP3Step2Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cbP3Step2Enable.Location = new System.Drawing.Point(17, 74);
             this.cbP3Step2Enable.Name = "cbP3Step2Enable";
-            this.cbP3Step2Enable.Size = new System.Drawing.Size(115, 16);
+            this.cbP3Step2Enable.Size = new System.Drawing.Size(180, 16);
             this.cbP3Step2Enable.TabIndex = 8;
-            this.cbP3Step2Enable.Text = "八人塔换位提醒";
+            this.cbP3Step2Enable.Text = "八人塔换位提醒（慎用！）";
             this.cbP3Step2Enable.UseVisualStyleBackColor = true;
             this.cbP3Step2Enable.CheckedChanged += new System.EventHandler(this.cbP3Step2Enable_CheckedChanged);
             // 
@@ -525,6 +525,38 @@
             this.cbP4Step1Enable.UseVisualStyleBackColor = true;
             this.cbP4Step1Enable.CheckedChanged += new System.EventHandler(this.cbP4Step1Enable_CheckedChanged);
             // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.label16);
+            this.tabPage6.Controls.Add(this.cbP5Step1Enable);
+            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Size = new System.Drawing.Size(910, 331);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "P5";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(15, 35);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(197, 12);
+            this.label16.TabIndex = 11;
+            this.label16.Text = "功能说明：给雷翼点名的玩家标记12";
+            // 
+            // cbP5Step1Enable
+            // 
+            this.cbP5Step1Enable.AutoSize = true;
+            this.cbP5Step1Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbP5Step1Enable.Location = new System.Drawing.Point(17, 16);
+            this.cbP5Step1Enable.Name = "cbP5Step1Enable";
+            this.cbP5Step1Enable.Size = new System.Drawing.Size(102, 16);
+            this.cbP5Step1Enable.TabIndex = 10;
+            this.cbP5Step1Enable.Text = "雷翼点名提醒";
+            this.cbP5Step1Enable.UseVisualStyleBackColor = true;
+            this.cbP5Step1Enable.CheckedChanged += new System.EventHandler(this.cbP5Step1Enable_CheckedChanged);
+            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.btnPlayDbgLog);
@@ -566,38 +598,6 @@
             this.tbLog.Size = new System.Drawing.Size(730, 219);
             this.tbLog.TabIndex = 4;
             // 
-            // tabPage6
-            // 
-            this.tabPage6.Controls.Add(this.label16);
-            this.tabPage6.Controls.Add(this.cbP5Step1Enable);
-            this.tabPage6.Location = new System.Drawing.Point(4, 22);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Size = new System.Drawing.Size(910, 331);
-            this.tabPage6.TabIndex = 5;
-            this.tabPage6.Text = "P5";
-            this.tabPage6.UseVisualStyleBackColor = true;
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(15, 35);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(197, 12);
-            this.label16.TabIndex = 11;
-            this.label16.Text = "功能说明：给雷翼点名的玩家标记12";
-            // 
-            // cbP5Step1Enable
-            // 
-            this.cbP5Step1Enable.AutoSize = true;
-            this.cbP5Step1Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.cbP5Step1Enable.Location = new System.Drawing.Point(17, 16);
-            this.cbP5Step1Enable.Name = "cbP5Step1Enable";
-            this.cbP5Step1Enable.Size = new System.Drawing.Size(102, 16);
-            this.cbP5Step1Enable.TabIndex = 10;
-            this.cbP5Step1Enable.Text = "雷翼点名提醒";
-            this.cbP5Step1Enable.UseVisualStyleBackColor = true;
-            this.cbP5Step1Enable.CheckedChanged += new System.EventHandler(this.cbP5Step1Enable_CheckedChanged);
-            // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -615,10 +615,10 @@
             this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
