@@ -310,6 +310,21 @@ namespace DragonSongRepriseHelper.SettingModel
             }
             return false;
         }
+
+        public HashSet<string> GetPlayerHashSet()
+        {
+            HashSet<string> res = new HashSet<string>();
+            res.Add(this.D1);
+            res.Add(this.D2);
+            res.Add(this.D3);
+            res.Add(this.D4);
+            res.Add(this.H1);
+            res.Add(this.H2);
+            res.Add(this.MT);
+            res.Add(this.ST);
+
+            return res;
+        }
     }
 
 }

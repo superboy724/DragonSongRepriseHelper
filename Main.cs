@@ -45,6 +45,10 @@ namespace DragonSongRepriseHelper
         const int p4redmark = 0xAD7;
         const int p4bluemark = 0xAD8;
 
+        //P6光暗点名
+        const int p6LightMark = 0xAC6;
+        const int p6DarkMark = 0xAC7;
+
         string[] p2Step2AttackPlayer = new string[2];
         List<string> p2Step3AttackPlayer = new List<string>();
         List<string> p2Step1AttackPlayer = new List<string>();
@@ -69,6 +73,8 @@ namespace DragonSongRepriseHelper
         List<string> p4step1ChangePlayer = new List<string>(8);
         string[] p4step2FirstAttackPlayer = new string[2];
         string[] p5step1ThunderAttackPlayer = new string[2];
+        Dictionary<string,int> p6step2AttackPlayer = new Dictionary<string, int>();
+        int p6step2AttackPlayerCount = 0;
 
         public void DeInitPlugin()
         {
@@ -324,6 +330,22 @@ namespace DragonSongRepriseHelper
                 try
                 {
                     P5Step1Process(log);
+                }
+                catch (Exception ex)
+                {
+                    Log.Print(ex.ToString());
+                }
+            });
+            //注册P6十字火光暗点名事件
+            logreader.RegisterEvent(26, "^(.+?)StatusAdd(.+?)\\:(AC6|AC7)\\:(\\s|\\S)+$", log =>
+            {
+                if (!settingContainer.IsRaidMode)
+                {
+                    return;
+                }
+                try
+                {
+                    P6Step2Process(log);
                 }
                 catch (Exception ex)
                 {
@@ -941,25 +963,25 @@ namespace DragonSongRepriseHelper
             double posY = Convert.ToDouble(logSubString.Split(':')[9]);
             //[22:06:22.682] StartsCasting 14:400195AB:尼德霍格:6718:黑暗龙炎冲:400195AB:尼德霍格:4.700:108.00:108.00:0.00:-2.18
             //D3塔
-            if ((posX > 90 && posX < 94) && (posY > 90 && posY < 94))
+            if ((posX > 80 && posX < 100) && (posY > 80 && posY < 100))
             {
                 p3Step2TowerPos[0] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,1);
             }
             //D4塔
-            if ((posX > 106 && posX < 110) && (posY > 90 && posY < 94))
+            if ((posX > 101 && posX < 120) && (posY > 80 && posY < 100))
             {
                 p3Step2TowerPos[1] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,2);
             }
             //H1塔
-            if ((posX > 90 && posX < 94) && (posY > 106 && posY < 110))
+            if ((posX > 80 && posX < 100) && (posY > 101 && posY < 120))
             {
                 p3Step2TowerPos[2] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,3);
             }
             //H2塔
-            if ((posX > 106 && posX < 110) && (posY > 106 && posY < 110))
+            if ((posX > 101 && posX < 120) && (posY > 101 && posY < 120))
             {
                 p3Step2TowerPos[3] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,4);
@@ -1353,6 +1375,56 @@ namespace DragonSongRepriseHelper
             }
         }
 
+        //P6光暗点名
+        public void P6Step2Process(string log)
+        {
+            string logSubString = log.Substring(log.IndexOf("]"));
+            string gainCodeStr = logSubString.Split(':')[1];
+            string gainName = logSubString.Split(':')[2];
+            string playerId = logSubString.Split(':')[7];
+
+            Log.Print("P6光暗点名" + playerId + " 类型:" + gainCodeStr + " 技能名:" + gainName);
+
+            int gainCode = Convert.ToInt32(gainCodeStr, 16);
+            p6step2AttackPlayer.Add(playerId, gainCode);
+            p6step2AttackPlayerCount++;
+            if (p6step2AttackPlayerCount == 6)
+            {
+                var playerList = this.settingContainer.PlayerSetting.GetPlayerHashSet();
+                foreach(var item in p6step2AttackPlayer)
+                {
+                    if (item.Value == p6DarkMark)
+                    {
+                        Log.Print("点名attack：" + item.Value);
+                        if (this.settingContainer.FunctionSetting.P6Step2Enable)
+                        {
+                            int index = this.settingContainer.PlayerSetting.PlayerIndex[item.Key];
+                            postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", index));
+                        }
+                    }
+                    if (item.Value == p6LightMark)
+                    {
+                        Log.Print("点名bind：" + item.Value);
+                        if (this.settingContainer.FunctionSetting.P6Step2Enable)
+                        {
+                            int index = this.settingContainer.PlayerSetting.PlayerIndex[item.Key];
+                            postNamazuHelper.SendCommand(string.Format("/mk bind <{0}>", index));
+                        }
+                    }
+                    playerList.Remove(item.Key);
+                }
+                foreach(var item in playerList)
+                {
+                    Log.Print("点名stop：" + item);
+                    if (this.settingContainer.FunctionSetting.P6Step2Enable)
+                    {
+                        int index = this.settingContainer.PlayerSetting.PlayerIndex[item];
+                        postNamazuHelper.SendCommand(string.Format("/mk stop <{0}>", index));
+                    }
+                }
+            }
+            
+        }
         public void Clear(int wait = 5000)
         {
             if (isDebug)
@@ -1435,6 +1507,8 @@ namespace DragonSongRepriseHelper
             nidhoggNotBossId = new Dictionary<string, int>();
             isP3Step2Endtoolpid = false;
             p5step1ThunderAttackPlayer = new string[2];
+            p6step2AttackPlayer = new Dictionary<string, int>();
+            p6step2AttackPlayerCount = 0;
             markOffset = -1;
             Log.Print("战斗结束");
         }

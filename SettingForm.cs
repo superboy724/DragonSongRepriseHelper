@@ -72,6 +72,8 @@ namespace DragonSongRepriseHelper
 
             cbP5Step1Enable.Checked = settingContainer.FunctionSetting.P5Step1Enable;
 
+            cbP6Step2Enable.Checked = settingContainer.FunctionSetting.P6Step2Enable;
+
             if (string.IsNullOrEmpty(tbPostNamazuUrl.Text))
             {
                 tbPostNamazuUrl.Text = "http://127.0.0.1:请修改端口号/command";
@@ -267,6 +269,11 @@ namespace DragonSongRepriseHelper
         private void cbP5Step1Enable_CheckedChanged(object sender, EventArgs e)
         {
             this.settingContainer.FunctionSetting.P5Step1Enable = cbP5Step1Enable.Checked;
+        }
+
+        private void cbP6Step2Enable_CheckedChanged(object sender, EventArgs e)
+        {
+            this.settingContainer.FunctionSetting.P6Step2Enable = cbP6Step2Enable.Checked;
         }
     }
 }

@@ -75,6 +75,9 @@
             this.btnPlayDbgLog = new System.Windows.Forms.Button();
             this.btnLogClear = new System.Windows.Forms.Button();
             this.tbLog = new System.Windows.Forms.TextBox();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.label17 = new System.Windows.Forms.Label();
+            this.cbP6Step2Enable = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -82,6 +85,7 @@
             this.tabPage5.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage7.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -91,6 +95,7 @@
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage6);
+            this.tabControl1.Controls.Add(this.tabPage7);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
@@ -410,9 +415,9 @@
             this.cbP3Step2EndEnable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.cbP3Step2EndEnable.Location = new System.Drawing.Point(17, 126);
             this.cbP3Step2EndEnable.Name = "cbP3Step2EndEnable";
-            this.cbP3Step2EndEnable.Size = new System.Drawing.Size(116, 16);
+            this.cbP3Step2EndEnable.Size = new System.Drawing.Size(247, 16);
             this.cbP3Step2EndEnable.TabIndex = 10;
-            this.cbP3Step2EndEnable.Text = "ST分身拉线提醒";
+            this.cbP3Step2EndEnable.Text = "ST分身拉线提醒(慎用！存在乱报情况)";
             this.cbP3Step2EndEnable.UseVisualStyleBackColor = true;
             this.cbP3Step2EndEnable.CheckedChanged += new System.EventHandler(this.cbP3Step2EndEnable_CheckedChanged);
             // 
@@ -598,6 +603,38 @@
             this.tbLog.Size = new System.Drawing.Size(730, 219);
             this.tbLog.TabIndex = 4;
             // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.label17);
+            this.tabPage7.Controls.Add(this.cbP6Step2Enable);
+            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Size = new System.Drawing.Size(910, 331);
+            this.tabPage7.TabIndex = 6;
+            this.tabPage7.Text = "P6";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(12, 36);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(161, 12);
+            this.label17.TabIndex = 13;
+            this.label17.Text = "功能说明：自动标记光暗点名";
+            // 
+            // cbP6Step2Enable
+            // 
+            this.cbP6Step2Enable.AutoSize = true;
+            this.cbP6Step2Enable.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.cbP6Step2Enable.Location = new System.Drawing.Point(14, 17);
+            this.cbP6Step2Enable.Name = "cbP6Step2Enable";
+            this.cbP6Step2Enable.Size = new System.Drawing.Size(102, 16);
+            this.cbP6Step2Enable.TabIndex = 12;
+            this.cbP6Step2Enable.Text = "邪龙之炎提醒";
+            this.cbP6Step2Enable.UseVisualStyleBackColor = true;
+            this.cbP6Step2Enable.CheckedChanged += new System.EventHandler(this.cbP6Step2Enable_CheckedChanged);
+            // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -619,6 +656,8 @@
             this.tabPage6.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            this.tabPage7.ResumeLayout(false);
+            this.tabPage7.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -672,5 +711,8 @@
         private System.Windows.Forms.TabPage tabPage6;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.CheckBox cbP5Step1Enable;
+        private System.Windows.Forms.TabPage tabPage7;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.CheckBox cbP6Step2Enable;
     }
 }
