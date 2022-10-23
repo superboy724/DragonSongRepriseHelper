@@ -963,25 +963,25 @@ namespace DragonSongRepriseHelper
             double posY = Convert.ToDouble(logSubString.Split(':')[9]);
             //[22:06:22.682] StartsCasting 14:400195AB:尼德霍格:6718:黑暗龙炎冲:400195AB:尼德霍格:4.700:108.00:108.00:0.00:-2.18
             //D3塔
-            if ((posX > 80 && posX < 100) && (posY > 80 && posY < 100))
+            if (posX < 100 && posY < 100)
             {
                 p3Step2TowerPos[0] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,1);
             }
             //D4塔
-            if ((posX > 101 && posX < 120) && (posY > 80 && posY < 100))
+            if (posX > 100 && posY < 100)
             {
                 p3Step2TowerPos[1] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,2);
             }
             //H1塔
-            if ((posX > 80 && posX < 100) && (posY > 101 && posY < 120))
+            if (posX < 100 && posY > 100)
             {
                 p3Step2TowerPos[2] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,3);
             }
             //H2塔
-            if ((posX > 101 && posX < 120) && (posY > 101 && posY < 120))
+            if (posX > 100 && posY > 100)
             {
                 p3Step2TowerPos[3] = Convert.ToInt32(towerCode, 16);
                 nidhoggNotBossId.Add(bossID,4);
