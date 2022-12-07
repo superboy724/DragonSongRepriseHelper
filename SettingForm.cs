@@ -71,6 +71,7 @@ namespace DragonSongRepriseHelper
             cbP4Step2Enable.Checked = settingContainer.FunctionSetting.P4Step2Enable;
 
             cbP5Step1Enable.Checked = settingContainer.FunctionSetting.P5Step1Enable;
+            cbP5Step3Enable.Checked = settingContainer.FunctionSetting.P5Step3Enable;
 
             cbP6Step2Enable.Checked = settingContainer.FunctionSetting.P6Step2Enable;
 
@@ -274,6 +275,11 @@ namespace DragonSongRepriseHelper
         private void cbP6Step2Enable_CheckedChanged(object sender, EventArgs e)
         {
             this.settingContainer.FunctionSetting.P6Step2Enable = cbP6Step2Enable.Checked;
+        }
+
+        private void cbP5Step3Enable_CheckedChanged(object sender, EventArgs e)
+        {
+            this.settingContainer.FunctionSetting.P5Step3Enable = cbP5Step3Enable.Checked;
         }
     }
 }

@@ -45,6 +45,9 @@ namespace DragonSongRepriseHelper
         const int p4redmark = 0xAD7;
         const int p4bluemark = 0xAD8;
 
+        //P5索尼拉线X点名
+        const int p5playstationx = 0x11C;
+
         //P6光暗点名
         const int p6LightMark = 0xAC6;
         const int p6DarkMark = 0xAC7;
@@ -75,6 +78,8 @@ namespace DragonSongRepriseHelper
         string[] p5step1ThunderAttackPlayer = new string[2];
         Dictionary<string,int> p6step2AttackPlayer = new Dictionary<string, int>();
         int p6step2AttackPlayerCount = 0;
+        string[] p5playstationAttackPlayer = new string[2];
+        bool isMainRaid = false;
 
         public void DeInitPlugin()
         {
@@ -177,6 +182,14 @@ namespace DragonSongRepriseHelper
                     if(trueCode == mahjong1 || trueCode == mahjong2 || trueCode == mahjong3)
                     {
                         P3Step1PreProcess(log);
+                    }
+                    //点索尼拉线的×
+                    if(trueCode == p5playstationx)
+                    {
+                        if(isMainRaid || this.settingContainer.ForceRun)
+                        {
+                            P5Step3Process(log);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -285,6 +298,7 @@ namespace DragonSongRepriseHelper
                 else
                 {
                     settingContainer.IsRaidMode = false;
+                    isMainRaid = false;
                 }
                 Log.Print("当前副本:" + raidName);
             });
@@ -350,6 +364,14 @@ namespace DragonSongRepriseHelper
                 catch (Exception ex)
                 {
                     Log.Print(ex.ToString());
+                }
+            });
+            logreader.RegisterEvent(21, "^(.+?)ActionEffect(.+?)\\:63C9\\:(\\s|\\S)+$", log =>
+            {
+                if (!isMainRaid)
+                {
+                    Log.Print("检测到进入本体");
+                    isMainRaid = true;
                 }
             });
             logreader.Init();
@@ -1375,6 +1397,54 @@ namespace DragonSongRepriseHelper
             }
         }
 
+        //P5索尼拉线
+        public void P5Step3Process(string log)
+        {
+            string logSubString = log.Substring(log.IndexOf("]"));
+            string playerId = logSubString.Split(':')[2];
+            Log.Print("点名" + playerId);
+
+            if (p5playstationAttackPlayer[0] == null)
+            {
+                p5playstationAttackPlayer[0] = playerId;
+                return;
+            }
+            if (p5playstationAttackPlayer[1] == null)
+            {
+                p5playstationAttackPlayer[1] = playerId;
+            }
+
+            if (p5playstationAttackPlayer[0] != null && p5playstationAttackPlayer[1] != null)
+            {
+                int partyIndex1 = this.settingContainer.PlayerSetting.PlayerIndex[p5playstationAttackPlayer[0]];
+                int partyIndex2 = this.settingContainer.PlayerSetting.PlayerIndex[p5playstationAttackPlayer[1]];
+                int jobIndex1 = this.settingContainer.PlayerSetting.GetJobIndexByPlayerId(p5playstationAttackPlayer[0]);
+                int jobIndex2 = this.settingContainer.PlayerSetting.GetJobIndexByPlayerId(p5playstationAttackPlayer[1]);
+                if (jobIndex1 >= jobIndex2)
+                {
+                    Log.Print("索尼拉线高顺位：" + p5playstationAttackPlayer[0] + "=" + jobIndex1 + ",低顺位：" + p5playstationAttackPlayer[1] + "=" + jobIndex2);
+                    if (this.settingContainer.FunctionSetting.P5Step3Enable)
+                    {
+                        postNamazuHelper.SendCommand("/mk attack1 <" + partyIndex1 + ">");
+                        postNamazuHelper.SendCommand("/mk attack2 <" + partyIndex2 + ">");
+                        postNamazuHelper.SendCommand("/p 【索尼拉线X点名】" + p5playstationAttackPlayer[0] + "(高顺位)" + " " + p5playstationAttackPlayer[1] + "(低顺位)");
+                        Clear(30000);
+                    }
+                }
+                else if (jobIndex1 < jobIndex2)
+                {
+                    Log.Print("高顺位：" + p5playstationAttackPlayer[1] + "=" + jobIndex2 + ",低顺位：" + p5playstationAttackPlayer[0] + "=" + jobIndex1);
+                    if (this.settingContainer.FunctionSetting.P5Step3Enable)
+                    {
+                        postNamazuHelper.SendCommand("/mk attack1 <" + partyIndex2 + ">");
+                        postNamazuHelper.SendCommand("/mk attack2 <" + partyIndex1 + ">");
+                        postNamazuHelper.SendCommand("/p 【索尼拉线X点名】" + p5playstationAttackPlayer[1] + "(高顺位)" + " " + p5playstationAttackPlayer[0] + "(低顺位)");
+                        Clear(30000);
+                    }
+                }
+            }
+        }
+
         //P6光暗点名
         public void P6Step2Process(string log)
         {
@@ -1393,18 +1463,18 @@ namespace DragonSongRepriseHelper
                 var playerList = this.settingContainer.PlayerSetting.GetPlayerHashSet();
                 foreach(var item in p6step2AttackPlayer)
                 {
-                    if (item.Value == p6DarkMark)
+                    if (item.Value == p6LightMark)
                     {
-                        Log.Print("点名attack：" + item.Value);
+                        Log.Print("点名attack：" + item.Key);
                         if (this.settingContainer.FunctionSetting.P6Step2Enable)
                         {
                             int index = this.settingContainer.PlayerSetting.PlayerIndex[item.Key];
                             postNamazuHelper.SendCommand(string.Format("/mk attack <{0}>", index));
                         }
                     }
-                    if (item.Value == p6LightMark)
+                    if (item.Value == p6DarkMark)
                     {
-                        Log.Print("点名bind：" + item.Value);
+                        Log.Print("点名bind：" + item.Key);
                         if (this.settingContainer.FunctionSetting.P6Step2Enable)
                         {
                             int index = this.settingContainer.PlayerSetting.PlayerIndex[item.Key];
@@ -1509,6 +1579,7 @@ namespace DragonSongRepriseHelper
             p5step1ThunderAttackPlayer = new string[2];
             p6step2AttackPlayer = new Dictionary<string, int>();
             p6step2AttackPlayerCount = 0;
+            p5playstationAttackPlayer = new string[2];
             markOffset = -1;
             Log.Print("战斗结束");
         }
